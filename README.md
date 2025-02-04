@@ -4,4 +4,4 @@ TLIB Base component.
 
 Need to be used with TLib Platform and TLib Common library
 
-Need Java21
+Need Java17

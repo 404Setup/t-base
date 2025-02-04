@@ -15,7 +15,7 @@ import java.util.Locale;
  * @param <C> the underlying type representing the source (e.g., CommandSender)
  * @param <R> the player-specific type related to the platform (e.g., Player)
  */
-public interface Source<C, R> {
+public interface CommandSource<C, R> {
     /**
      * Retrieves the operator associated with this source implementation.
      * <p>

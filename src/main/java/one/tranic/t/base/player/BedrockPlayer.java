@@ -118,4 +118,22 @@ public class BedrockPlayer {
         }
         return -1;
     }
+
+    /**
+     * Determines if the player has access to the Geyser platform compatibility integration.
+     *
+     * @return {@code true} if the player has access to Geyser; {@code false} otherwise.
+     */
+    public boolean hasGeyser() {
+        return geyser;
+    }
+
+    /**
+     * Checks if the player has Floodgate integration enabled.
+     *
+     * @return {@code true} if the player has Floodgate integration; {@code false} otherwise.
+     */
+    public boolean hasFloodgate() {
+        return floodgate;
+    }
 }

@@ -1,0 +1,34 @@
+package one.tranic.t.util;
+
+public class Sys {
+    public static int getCurrentJVMVersion() {
+        if (cachedJvmVersion != 0) {
+            return cachedJvmVersion;
+        }
+
+        try { // https://stackoverflow.com/a/2591122
+            String version = System.getProperty("java.version");
+            if (version.startsWith("1.")) {
+                version = version.substring(2, 3);
+            } else {
+                int dot = version.indexOf(".");
+                if (dot != -1) {
+                    version = version.substring(0, dot);
+                }
+            }
+            version = version.split("-")[0];
+            return Integer.parseInt(version);
+        } catch (Exception e) {
+            return Runtime.version().feature();
+        }
+    }
+
+    // Since Java 1.1, but this library has not supported it either
+    public static int getCurrentJVMClassVersion() {
+        return 44 + cachedJvmVersion;
+    }
+
+    private static final int cachedJvmVersion = getCurrentJVMVersion();
+
+
+}

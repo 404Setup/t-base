@@ -9,15 +9,23 @@ plugins {
 }
 
 group = "one.tranic"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://oss.sonatype.org/content/groups/public/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://jitpack.io")
     maven("https://repo.opencollab.dev/main/")
 }
 
 dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
+
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
     compileOnly("org.geysermc.geyser:api:2.4.2-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
@@ -28,15 +36,13 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
 }
 
-val targetJavaVersion = 21
+val targetJavaVersion = 17
 
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 }
 
 tasks.withType<JavaCompile> {
