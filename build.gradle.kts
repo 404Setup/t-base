@@ -17,6 +17,7 @@ repositories {
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://jitpack.io")
+    maven("https://repo.viaversion.com")
     maven("https://repo.opencollab.dev/main/")
 }
 
@@ -29,6 +30,8 @@ dependencies {
 
     compileOnly("org.geysermc.geyser:api:2.4.2-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT")
+
+    compileOnly("com.viaversion:viaversion-api:5.2.2-SNAPSHOT")
 
     compileOnly("com.google.guava:guava:33.3.0-jre")
     compileOnly("it.unimi.dsi:fastutil:8.5.15")

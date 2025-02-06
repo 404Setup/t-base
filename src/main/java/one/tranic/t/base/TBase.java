@@ -4,6 +4,7 @@ import one.tranic.t.base.command.Operator;
 import one.tranic.t.base.command.source.CommandSource;
 import one.tranic.t.util.Threads;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +55,8 @@ public class TBase {
         return operator;
     }
 
+    private static Method getConsoleMethod;
+
     /**
      * Retrieves the console command source using reflection.
      * This method attempts to access the `getConsoleSource` method in the
@@ -65,10 +68,13 @@ public class TBase {
      */
     private static CommandSource<?, ?> getConsoleSource() throws IllegalStateException {
         try {
+            if (getConsoleMethod != null) {
+                return (CommandSource<?, ?>) getConsoleMethod.invoke(null); // Cache target method
+            }
             Class<?> commonClass = Class.forName(packageName + ".common.TCommon");
-            var method = commonClass.getDeclaredMethod("getConsoleSource");
-            method.setAccessible(true);
-            return (CommandSource<?, ?>) method.invoke(null);
+            getConsoleMethod = commonClass.getDeclaredMethod("getConsoleSource");
+            getConsoleMethod.setAccessible(true);
+            return (CommandSource<?, ?>) getConsoleMethod.invoke(null);
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Failed to access getConsoleSource via reflection", e);
         }
