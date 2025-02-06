@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "one.tranic"
-version = "1.1.0"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -35,8 +35,8 @@ dependencies {
 
     compileOnly("com.google.guava:guava:33.3.0-jre")
     compileOnly("it.unimi.dsi:fastutil:8.5.15")
-    compileOnly("net.kyori:adventure-api:4.18.0")
-    compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
+    implementation("net.kyori:adventure-api:4.18.0")
+    implementation("net.kyori:adventure-text-minimessage:4.18.0")
 }
 
 val targetJavaVersion = 17
