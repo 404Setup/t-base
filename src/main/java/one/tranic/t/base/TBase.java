@@ -16,7 +16,7 @@ public class TBase {
     public static final CommandSource<?, ?> CONSOLE_SOURCE;
     private final static Operator operator = new Operator("Console", UUID.fromString("05b11eee-24db-4a21-ba9d-e12e8df9a92f"));
     private static final String packageName;
-    private static Method getConsoleMethod;
+    private static Supplier<CommandSource<?, ?>> getConsoleSourceSupplier;
 
     static {
         packageName = getRootPath();
@@ -57,25 +57,14 @@ public class TBase {
     }
 
     /**
-     * Retrieves the command source associated with the system console.
-     * This method utilizes reflection to dynamically access the corresponding implementation.
-     * If the required method or class cannot be accessed, an {@code IllegalStateException}
-     * is thrown to indicate the failure.
+     * Retrieves the console as a {@link CommandSource}, an abstraction representing
+     * the source of command execution or interaction.
      *
-     * @return the command source for the system console, represented as a {@code CommandSource<?, ?>}
-     * @throws IllegalStateException if the method or class cannot be accessed via reflection
+     * @return a {@link CommandSource} instance representing the console source, typically used
+     *         for administrative or automated command execution.
      */
-    private static CommandSource<?, ?> getConsoleSource() throws IllegalStateException {
-        try {
-            if (getConsoleMethod != null)
-                return (CommandSource<?, ?>) getConsoleMethod.invoke(null); // Cache target method
-            Class<?> commonClass = Class.forName(packageName + ".common.TCommon");
-            getConsoleMethod = commonClass.getDeclaredMethod("getConsoleSource");
-            getConsoleMethod.setAccessible(true);
-            return (CommandSource<?, ?>) getConsoleMethod.invoke(null);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Failed to access getConsoleSource via reflection", e);
-        }
+    public static CommandSource<?, ?> getConsoleSource() {
+        return getConsoleSourceSupplier.get();
     }
 
     /**
