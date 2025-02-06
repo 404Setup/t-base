@@ -12,6 +12,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface Player<C> {
+    static @Nullable Player<?> getPlayer(String name) {
+        return Players.getPlayer(name);
+    }
+
+    static @Nullable Player<?> getPlayer(UUID uuid) {
+        return Players.getPlayer(uuid);
+    }
+
     /**
      * Retrieves the username of the player.
      *
