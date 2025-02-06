@@ -74,7 +74,7 @@ public interface CommandSource<C, R> {
      * <p>
      * If the source is not a player, it returns the environment's default locale.
      */
-    @Nullable Locale locale();
+    @Nullable Locale getLocale();
 
     /**
      * Checks if the entity associated with this source has the specified permission.
