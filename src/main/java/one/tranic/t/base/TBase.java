@@ -32,6 +32,7 @@ public class TBase {
      * parent package in the hierarchy of the {@code TBase} class.
      */
     public static String getRootPath() {
+        if (packageName != null) return packageName;
         return getCurrentRootPackage(TBase.class);
     }
 
