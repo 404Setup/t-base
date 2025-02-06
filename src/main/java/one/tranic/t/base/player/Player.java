@@ -1,7 +1,10 @@
 package one.tranic.t.base.player;
 
+import com.viaversion.viaversion.api.Via;
 import net.kyori.adventure.text.Component;
 import one.tranic.t.base.TBase;
+import one.tranic.t.base.hook.ViaVersion;
+import one.tranic.t.util.ProtocolVersion;
 import org.geysermc.cumulus.form.Form;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +38,40 @@ public interface Player<C> {
      */
     default @Nullable String getXUID() {
         return isBedrockPlayer() ? BedrockPlayer.getXUID(getUniqueId()) : null;
+    }
+
+    /**
+     * Retrieves the protocol version of the player based on their connection.
+     * <p>
+     * If the ViaVersion plugin is enabled, this method uses the ViaVersion API to
+     * determine the protocol version of the player.
+     * If ViaVersion is not enabled, it returns -1.
+     *
+     * @return the player's protocol version as an integer if ViaVersion is enabled;
+     * otherwise, -1.
+     */
+    default int getPlayerProtocolVersion() {
+        if (ViaVersion.isEnabled)
+            return Via.getAPI().getPlayerVersion(getUniqueId());
+        return -1;
+    }
+
+    /**
+     * Retrieves the protocol version of the player.
+     * <p>
+     * This method checks if the ViaVersion library is enabled.
+     * If enabled, it fetches the player's protocol version using their unique identifier (UUID)
+     * and maps it to the appropriate {@link ProtocolVersion}.
+     * If ViaVersion is not enabled, this method returns {@link ProtocolVersion#UNKNOWN}.
+     *
+     * @return the {@link ProtocolVersion} associated with the player, or
+     * {@link ProtocolVersion#UNKNOWN} if the protocol version cannot
+     * be determined.
+     */
+    default ProtocolVersion getPlayerVersion() {
+        if (ViaVersion.isEnabled)
+            return ProtocolVersion.fromProtocolVersion(Via.getAPI().getPlayerVersion(getUniqueId()));
+        return ProtocolVersion.UNKNOWN;
     }
 
     /**
