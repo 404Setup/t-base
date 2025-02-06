@@ -16,6 +16,7 @@ public class TBase {
     public static final CommandSource<?, ?> CONSOLE_SOURCE;
     private final static Operator operator = new Operator("Console", UUID.fromString("05b11eee-24db-4a21-ba9d-e12e8df9a92f"));
     private static final String packageName;
+    private static Method getConsoleMethod;
 
     static {
         packageName = getRootPath();
@@ -50,27 +51,23 @@ public class TBase {
         return currentPackage; // Return as is, if no parent exists
     }
 
-
     public static Operator console() {
         return operator;
     }
 
-    private static Method getConsoleMethod;
-
     /**
-     * Retrieves the console command source using reflection.
-     * This method attempts to access the `getConsoleSource` method in the
-     * `one.tranic.t.common.TCommon` class to obtain the console source.
+     * Retrieves the command source associated with the system console.
+     * This method utilizes reflection to dynamically access the corresponding implementation.
+     * If the required method or class cannot be accessed, an {@code IllegalStateException}
+     * is thrown to indicate the failure.
      *
-     * @return the console command source of type {@code CommandSource<?, ?>}
-     * @throws IllegalStateException if the method cannot be accessed or invoked
-     *                               due to reflective operation issues
+     * @return the command source for the system console, represented as a {@code CommandSource<?, ?>}
+     * @throws IllegalStateException if the method or class cannot be accessed via reflection
      */
     private static CommandSource<?, ?> getConsoleSource() throws IllegalStateException {
         try {
-            if (getConsoleMethod != null) {
+            if (getConsoleMethod != null)
                 return (CommandSource<?, ?>) getConsoleMethod.invoke(null); // Cache target method
-            }
             Class<?> commonClass = Class.forName(packageName + ".common.TCommon");
             getConsoleMethod = commonClass.getDeclaredMethod("getConsoleSource");
             getConsoleMethod.setAccessible(true);
