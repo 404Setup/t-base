@@ -33,8 +33,12 @@ dependencies {
 
     compileOnly("com.viaversion:viaversion-api:5.2.2-SNAPSHOT")
 
+    compileOnly("net.java.dev.jna:jna:5.16.0")
+    compileOnly("net.java.dev.jna:jna-platform:5.16.0")
+
     compileOnly("com.google.guava:guava:33.3.0-jre")
     compileOnly("it.unimi.dsi:fastutil:8.5.15")
+
     implementation("net.kyori:adventure-api:4.18.0")
     implementation("net.kyori:adventure-text-minimessage:4.18.0")
 }
