@@ -3,6 +3,7 @@ package one.tranic.t.base;
 import one.tranic.t.base.command.Operator;
 import one.tranic.t.base.command.source.CommandSource;
 import one.tranic.t.util.Threads;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -62,7 +63,8 @@ public class TBase {
      * @return a {@link CommandSource} instance representing the console source, typically used
      * for administrative or automated command execution.
      */
-    public static CommandSource<?, ?> getConsoleSource() {
+    public static @Nullable CommandSource<?, ?> getConsoleSource() {
+        if (getConsoleSourceSupplier == null) return null;
         return getConsoleSourceSupplier.get();
     }
 
