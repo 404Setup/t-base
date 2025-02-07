@@ -1,4 +1,4 @@
-package one.tranic.t.util.proxy;
+package one.tranic.t.base.parse.proxy;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;

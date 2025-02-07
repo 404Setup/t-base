@@ -1,4 +1,4 @@
-package one.tranic.t.util.proxy;
+package one.tranic.t.base.parse.proxy;
 
 import one.tranic.t.util.Collections;
 import org.jetbrains.annotations.Nullable;
