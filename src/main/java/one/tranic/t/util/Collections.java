@@ -212,6 +212,43 @@ public class Collections {
     }
 
     /**
+     * Creates and returns a new instance of a LinkedHashMap or a fastutil-based
+     * Object2ObjectLinkedOpenHashMap based on the value of the 'fastutil' flag.
+     * <p>
+     * If 'fastutil' is true, an Object2ObjectLinkedOpenHashMap is returned;
+     * otherwise, a standard LinkedHashMap is created.
+     *
+     * @param <K> the type of keys maintained by the map
+     * @param <V> the type of values stored in the map
+     * @return a new instance of a map, either LinkedHashMap or Object2ObjectLinkedOpenHashMap
+     */
+    public static <K, V> Map<K, V> newLinkedHashMap() {
+        return fastutil ? new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>() : new LinkedHashMap<>();
+    }
+
+    /**
+     * Creates a new LinkedHashMap or a fastutil Object2ObjectLinkedOpenHashMap based on the specified map.
+     *
+     * @param map the input map whose entries are to be copied to the newly created map; must not be null
+     * @return a new map containing the entries from the given map, maintaining insertion order
+     */
+    public static <K, V> Map<K, V> newLinkedHashMap(@NotNull Map<K, V> map) {
+        return fastutil ? new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>(map) : new LinkedHashMap<>(map);
+    }
+
+    /**
+     * Creates a new LinkedHashMap with the specified initial capacity.
+     * <p>
+     * Uses a fastutil implementation if available, otherwise defaults to Java's LinkedHashMap.
+     *
+     * @param initialCapacity the initial capacity of the map, must be non-negative and within the valid range.
+     * @return a new instance of a map implementing LinkedHashMap with the specified initial capacity.
+     */
+    public static <K, V> Map<K, V> newLinkedHashMap(@Range(from = 0, to = Integer.MAX_VALUE) int initialCapacity) {
+        return fastutil ? new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>(initialCapacity) : new LinkedHashMap<>(initialCapacity);
+    }
+
+    /**
      * Creates a new empty HashSet instance.
      * <p>
      * Depending on the configuration, this method returns either an instance
@@ -338,7 +375,7 @@ public class Collections {
     /**
      * Creates a new unmodifiable list containing the specified elements.
      *
-     * @param <T> the type of elements in the list
+     * @param <T>      the type of elements in the list
      * @param elements the elements to include in the unmodifiable list; must not be null
      * @return an unmodifiable list containing the provided elements
      */
