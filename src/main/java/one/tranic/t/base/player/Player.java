@@ -12,11 +12,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface Player<C> {
-    static @Nullable Player<?> getPlayer(String name) {
+    static @Nullable Player<?> getPlayer(@NotNull String name) {
         return Players.getPlayer(name);
     }
 
-    static @Nullable Player<?> getPlayer(UUID uuid) {
+    static @Nullable Player<?> getPlayer(@NotNull UUID uuid) {
         return Players.getPlayer(uuid);
     }
 
@@ -25,14 +25,14 @@ public interface Player<C> {
      *
      * @return the username of the player as a string
      */
-    String getUsername();
+    @NotNull String getUsername();
 
     /**
      * Retrieves the unique identifier (UUID) of the player.
      *
      * @return the universally unique identifier (UUID) of the player
      */
-    UUID getUniqueId();
+    @NotNull UUID getUniqueId();
 
     /**
      * Retrieves the Xbox Unique Identifier (XUID) for the player if the player is a Bedrock player.
@@ -72,7 +72,7 @@ public interface Player<C> {
      *
      * @return the player's protocol version as a {@link ProtocolVersion} instance.
      */
-    default ProtocolVersion getPlayerVersion() {
+    default @NotNull ProtocolVersion getPlayerVersion() {
         if (isBedrockPlayer()) return ProtocolVersion.UNKNOWN;
         return ProtocolVersion.fromProtocolVersion(ViaPlayer.getVersion(getUniqueId()));
     }
@@ -82,7 +82,7 @@ public interface Player<C> {
      *
      * @return the connected host as a string.
      */
-    String getConnectedHost();
+    @NotNull String getConnectedHost();
 
     /**
      * Sends a form to the player associated with the current instance.
@@ -92,11 +92,11 @@ public interface Player<C> {
      * @param form the form to be sent to the player; must not be null
      * @return {@code true} if the form was successfully sent, {@code false} otherwise
      */
-    default boolean sendForm(Form form) {
+    default boolean sendForm(@NotNull Form form) {
         return BedrockPlayer.sendForm(getUniqueId(), form);
     }
 
-    default CompletableFuture<Boolean> sendFormAsync(Form form) {
+    default @NotNull CompletableFuture<Boolean> sendFormAsync(@NotNull Form form) {
         return TBase.runAsync(() -> sendForm(form));
     }
 
@@ -115,7 +115,7 @@ public interface Player<C> {
      *
      * @return the locale representing the player's language and regional preferences.
      */
-    Locale getLocale();
+    @NotNull Locale getLocale();
 
     /**
      * Retrieves the location associated with the player.
@@ -159,7 +159,7 @@ public interface Player<C> {
      *
      * @return the source player object of type C
      */
-    C getSourcePlayer();
+    @Nullable C getSourcePlayer();
 
     /**
      * Removes the player from the server or disconnects the player for an unspecified reason.
@@ -174,7 +174,7 @@ public interface Player<C> {
      * @param reason the message or reason for the kick
      * @return true if the player was successfully kicked, false otherwise
      */
-    boolean kick(String reason);
+    boolean kick(@Nullable String reason);
 
     /**
      * Disconnects the player from the server with the specified reason.
@@ -189,7 +189,7 @@ public interface Player<C> {
      *
      * @param message the message to be sent, must not be null
      */
-    void sendMessage(String message);
+    void sendMessage(@NotNull String message);
 
     /**
      * Sends a message to the player represented by this instance.
