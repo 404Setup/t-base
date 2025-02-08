@@ -14,62 +14,50 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/**
- * The FetchVersion class is responsible for managing the fetching and updating of a plugin's version.
- * <p>
- * It performs periodic version checks, determines whether an update is available,
- * and provides formatted messages displaying update statuses.
- * <p>
- * This class implements both the {@code AutoCloseable} and {@code Runnable} interfaces for resource management and
- * asynchronous operations, respectively.
- */
-@SuppressWarnings("unused")
-public class FetchVersion implements AutoCloseable, Runnable {
+public abstract class VersionFetcher implements AutoCloseable, Runnable {
     private static final long CACHE_EXPIRY_MINUTES = 1440;
     private static final int SLEEP_HOURS = 2;
 
     private static final String UPDATE_MESSAGE_TEMPLATE = "<aqua>[{plugin}]</aqua> <gold>The plugin has an update available, from </gold>"
             + "<aqua>{oldVersion}</aqua> <gold>to</gold> <aqua>{latestVersion}</aqua> <gold>, download address: </gold>"
             + "<aqua>{resourceURL}</aqua>";
-
+    final URL updateCheckURL;
+    final String currentVersion;
     private final String pluginName;
-    private final URL updateCheckURL;
-    private final String currentVersion;
-    private final String resourceURL;
     private final String noUpdateTemplate;
+    private String resourceURL;
     private Thread updateThread;
     private String latestVersion;
     private Date lastUpdateTime = new Date();
 
-
     /**
-     * Constructs a {@code FetchVersion} instance for version checking and updating purposes.
+     * Constructs an instance of the {@code VersionFetcher} class.
      *
-     * @param currentVersion the current version of the associated plugin or application.
-     * @param pluginName     the name of the plugin or application being checked for updates.
-     * @param resourceId     the unique identifier for the resource being checked, typically corresponding to its ID on the update server.
+     * @param currentVersion the current version of the plugin or resource
+     * @param pluginName     the name of the plugin or resource
+     * @param api            the API URL for checking updates
      */
-    public FetchVersion(String currentVersion, String pluginName, String resourceId) {
-        this(currentVersion, pluginName, resourceId, null);
+    public VersionFetcher(String currentVersion, String pluginName, String api) {
+        this(currentVersion, pluginName, api, null);
     }
 
     /**
-     * Constructs a new FetchVersion instance responsible for managing version fetching and updates.
+     * Constructs an instance of the VersionFetcher class.
      *
-     * @param currentVersion the current version of the plugin as a String
-     * @param pluginName     the name of the plugin the version fetch is associated with
-     * @param resourceId     the resource ID of the plugin on the platform
-     * @param resourceURL    the URL of the resource; if null, a default URL is generated based on the resourceId
+     * @param currentVersion the current version of the plugin.
+     * @param pluginName     the name of the plugin for which version updates are being fetched.
+     * @param api            the URL of the API endpoint to check for updates.
+     * @param resourceURL    the URL of the plugin's resource page. If null, defaults to "<a href="https://spigotmc.org/resources/">SpigotMC</a>".
      */
-    public FetchVersion(String currentVersion, String pluginName, String resourceId, String resourceURL) {
+    public VersionFetcher(String currentVersion, String pluginName, String api, String resourceURL) {
         this.currentVersion = currentVersion;
         this.pluginName = pluginName;
         try {
-            this.updateCheckURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId);
+            this.updateCheckURL = new URL(api);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.resourceURL = Objects.requireNonNullElseGet(resourceURL, () -> "https://spigotmc.org/resources/" + resourceId);
+        this.resourceURL = Objects.requireNonNullElse(resourceURL, "https://spigotmc.org/resources/");
         this.noUpdateTemplate = "<aqua>[" + pluginName + "]</aqua> <green> Already the latest version (or because of cache)</green>";
     }
 
@@ -183,6 +171,15 @@ public class FetchVersion implements AutoCloseable, Runnable {
     }
 
     /**
+     * Updates the resource URL for the current instance.
+     *
+     * @param resourceURL the new URL of the resource to be associated with this instance
+     */
+    public void updateResourceURL(String resourceURL) {
+        this.resourceURL = resourceURL;
+    }
+
+    /**
      * Determines whether there is an update available for the current version
      * of the associated plugin or resource. This method checks the latest
      * known version against the current version and may fetch a new version
@@ -215,7 +212,7 @@ public class FetchVersion implements AutoCloseable, Runnable {
      * @return the latest version as a string, or null if an error occurs or the version cannot be retrieved
      */
     @SuppressWarnings("all")
-    private String fetchLatestVersion() {
+    public String fetchLatestVersion() {
         HttpURLConnection connection = null;
         try {
             connection = RequestWithProxyParser.openConnection(updateCheckURL);
@@ -223,7 +220,6 @@ public class FetchVersion implements AutoCloseable, Runnable {
                 return reader.readLine();
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         } finally {
             if (connection != null) {
@@ -231,5 +227,4 @@ public class FetchVersion implements AutoCloseable, Runnable {
             }
         }
     }
-
 }
