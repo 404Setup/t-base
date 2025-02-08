@@ -38,6 +38,7 @@ dependencies {
 
     compileOnly("com.google.guava:guava:33.3.0-jre")
     compileOnly("it.unimi.dsi:fastutil:8.5.15")
+    implementation("com.google.code.gson:gson:2.12.1")
 
     implementation("net.kyori:adventure-api:4.18.0")
     implementation("net.kyori:adventure-text-minimessage:4.18.0")
