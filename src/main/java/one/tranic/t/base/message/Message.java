@@ -122,7 +122,7 @@ public class Message {
      * @param component the {@link Component} to be serialized; must not be null
      * @return the serialized string representation of the given {@link Component}
      */
-    public String toString(@NotNull Component component) {
+    public static String toString(@NotNull Component component) {
         return LegacyComponentSerializer.legacySection().serialize(component);
     }
 
@@ -134,7 +134,7 @@ public class Message {
      * @return an array of BaseComponent objects representing the converted text,
      * or null if the platform is not BungeeCord
      */
-    public net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull String message) {
+    public static net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull String message) {
         Validate.notNull(message, "Message cannot be null");
         if (Platform.get() != Platform.BungeeCord) return null;
         return net.md_5.bungee.api.chat.TextComponent.fromLegacyText(message);
@@ -151,7 +151,7 @@ public class Message {
      * @return An array of {@link net.md_5.bungee.api.chat.BaseComponent} representing the provided
      * {@link Component}, or null if a non-BungeeCord platform is detected.
      */
-    public net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull Component component) {
+    public static net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull Component component) {
         Validate.notNull(component, "Component cannot be null");
         if (Platform.get() != Platform.BungeeCord) return null;
         return toBaseComponent(toString(component));
