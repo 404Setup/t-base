@@ -1,5 +1,6 @@
 package one.tranic.t.base.player;
 
+import one.tranic.t.base.parse.uuid.UUIDParser;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.cumulus.form.Form;
@@ -29,19 +30,45 @@ public class BedrockPlayer {
     }
 
     /**
-     * Determines whether the player associated with the given UUID is a Bedrock player.
-     * <p>
-     * This method checks if the UUID belongs to a Bedrock player, utilizing either the
-     * Floodgate or Geyser API based on the availability of these integrations.
+     * Determines if a player, identified by their UUID, is a Bedrock player.
+     * This method uses either the Floodgate or Geyser API to make the determination,
+     * depending on their availability, and falls back to checking if the player is
+     * a Floodgate player.
      *
-     * @param uuid The UUID of the player to check.
-     * @return {@code true} if the player is a Bedrock player; {@code false} otherwise.
+     * @param uuid the unique identifier of the player
+     * @return true if the player is a Bedrock player, false otherwise
      */
     public static boolean isBedrockPlayer(UUID uuid) {
         if (floodgate)
             return FloodgateApi.getInstance().isFloodgatePlayer(uuid);
         if (geyser) return GeyserApi.api().isBedrockPlayer(uuid);
-        return false;
+        return isFloodgatePlayer(uuid);
+    }
+
+    /**
+     * Determines whether the provided UUID string corresponds to a Floodgate player.
+     * This method checks if the UUID string, with dashes removed, starts with a specific prefix
+     * associated with Floodgate players.
+     *
+     * @param uuid the UUID string to be checked, expected in the standard UUID format with dashes
+     * @return true if the UUID belongs to a Floodgate player, false otherwise
+     */
+    public static boolean isFloodgatePlayer(String uuid) {
+        final String FLOODGATE_UUID_PREFIX = "0000000000000000";
+
+        String str = UUIDParser.removeDashes(uuid);
+        return str.startsWith(FLOODGATE_UUID_PREFIX);
+    }
+
+    /**
+     * Determines whether the player associated with the given UUID is a Floodgate player.
+     * This method converts the UUID to a string and checks if it matches the Floodgate criteria.
+     *
+     * @param uuid the unique identifier (UUID) of the player to be checked
+     * @return true if the player is identified as a Floodgate player; false otherwise
+     */
+    public static boolean isFloodgatePlayer(UUID uuid) {
+        return isFloodgatePlayer(uuid.toString());
     }
 
     /**
