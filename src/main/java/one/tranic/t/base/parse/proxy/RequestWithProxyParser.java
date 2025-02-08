@@ -4,9 +4,9 @@ import one.tranic.t.base.TBase;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.Future;
 
 /**
@@ -46,10 +46,10 @@ public class RequestWithProxyParser {
      * The connection is established using proxy settings if applicable.
      *
      * @param url the URL to which the connection should be opened
-     * @return a Future containing the established URLConnection, or a RuntimeException if an error occurs
+     * @return a Future containing the established HttpURLConnection, or a RuntimeException if an error occurs
      * @throws IOException if an IO error occurs while attempting to open the connection
      */
-    public static Future<URLConnection> openConnectionAsync(URL url) throws IOException {
+    public static Future<HttpURLConnection> openConnectionAsync(URL url) throws IOException {
         return TBase.executor.submit(() -> {
             try {
                 return openConnection(url);
@@ -63,10 +63,10 @@ public class RequestWithProxyParser {
      * Establishes an asynchronous connection to the specified URL.
      *
      * @param url the URL as a string to which the connection should be opened.
-     * @return a Future representing the pending result of the URLConnection.
+     * @return a Future representing the pending result of the HttpURLConnection.
      * @throws IOException if an error occurs while forming or opening the connection.
      */
-    public static Future<URLConnection> openConnectionAsync(String url) throws IOException {
+    public static Future<HttpURLConnection> openConnectionAsync(String url) throws IOException {
         return openConnectionAsync(new URL(url));
     }
 
@@ -74,10 +74,10 @@ public class RequestWithProxyParser {
      * Opens a connection to the specified URL string with proxy settings applied.
      *
      * @param url the URL string to which a connection is to be opened
-     * @return a URLConnection object pointing to the specified resource
+     * @return a HttpURLConnection object pointing to the specified resource
      * @throws IOException if an I/O error occurs while opening the connection
      */
-    public static URLConnection openConnection(String url) throws IOException {
+    public static HttpURLConnection openConnection(String url) throws IOException {
         return openConnection(new URL(url));
     }
 
@@ -86,11 +86,11 @@ public class RequestWithProxyParser {
      * from the system or environment settings.
      *
      * @param url the URL to which the connection needs to be established.
-     * @return an instance of {@link URLConnection} representing the connection to the specified URL.
+     * @return an instance of {@link HttpURLConnection} representing the connection to the specified URL.
      * @throws IOException if an I/O exception occurs while opening the connection.
      */
-    public static URLConnection openConnection(URL url) throws IOException {
-        return url.openConnection(proxy);
+    public static HttpURLConnection openConnection(URL url) throws IOException {
+        return (HttpURLConnection) url.openConnection(proxy);
     }
 
     /**
