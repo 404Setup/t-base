@@ -3,11 +3,12 @@ package one.tranic.t.base.updater;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import one.tranic.t.base.TBase;
+import one.tranic.t.base.parse.proxy.RequestWithProxyParser;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.Future;
@@ -156,17 +157,21 @@ public class FetchVersion {
     }
 
     public boolean hasUpdate() {
-        if (latestVersion != null && !latestVersion.isEmpty() && !isExpired()) {
+        if (latestVersion != null && !latestVersion.isBlank() && !isExpired()) {
             return !latestVersion.equals(currentVersion);
         }
+        HttpURLConnection connection = null;
         try {
-            URLConnection connection = updateCheckURL.openConnection();
+            connection = RequestWithProxyParser.openConnection(updateCheckURL);
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 latestVersion = reader.readLine();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        } finally {
+            if (connection != null)
+                connection.disconnect();
         }
         if (latestVersion == null || latestVersion.isEmpty()) {
             return false;
