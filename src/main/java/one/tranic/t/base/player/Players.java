@@ -16,7 +16,6 @@ public class Players {
     private static Function<UUID, Player<?>> getPlayerWithUUIDMethod;
     private static Supplier<List<Player<?>>> getOnlinePlayersMethod;
     private static Supplier<List<?>> getPlatformOnlinePlayersMethod;
-    private static Supplier<List<?>> getPlatformAltPlayersMethod;
     private static Supplier<List<String>> getOnlinePlayersNameMethod;
 
     /**
@@ -75,17 +74,6 @@ public class Players {
                 end.add(p);
         }
         return end;
-    }
-
-    /**
-     * Retrieves a list of alternate players specific to the platform.
-     * The exact type and nature of these players depend on the platform's implementation.
-     *
-     * @return a {@code List<?>} representing the alternate players for the platform;
-     * the list is guaranteed to be non-null.
-     */
-    public static @NotNull List<?> getPlatformAltPlayers() {
-        return getPlatformAltPlayersMethod.get();
     }
 
     /**
