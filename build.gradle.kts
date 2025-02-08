@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "one.tranic"
-version = "1.2.1"
+version = "1.2.2"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:26.0.2")
+    implementation("org.jetbrains:annotations:26.0.2")
 
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")

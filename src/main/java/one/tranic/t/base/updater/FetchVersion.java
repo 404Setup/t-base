@@ -88,17 +88,19 @@ public class FetchVersion implements AutoCloseable, Runnable {
     public void run() {
         try {
             for (; ; ) {
-                TimeUnit.HOURS.sleep(2);
+                TimeUnit.HOURS.sleep(SLEEP_HOURS);
                 this.hasUpdate();
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            return;
         }
     }
 
     public void start() {
         close();
         updateThread = Threads.newVirtualThreadFactoryOrDefault().newThread(this);
+        updateThread.setName("FetchVersion-Thread");
+        updateThread.setDaemon(true);
         updateThread.start();
     }
 
