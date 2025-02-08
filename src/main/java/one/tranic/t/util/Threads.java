@@ -27,25 +27,13 @@ public class Threads {
     }
 
     /**
-     * Creates and returns a thread factory for creating virtual threads.
-     * Virtual threads provide a lightweight threading model suitable for
-     * concurrent programming, allowing the creation of a large number of threads
-     * while minimizing resource consumption.
-     *
-     * @return a ThreadFactory instance configured to create virtual threads, or
-     * null if virtual threads are not supported in the current JVM.
-     */
-    public static ThreadFactory newVirtualThreadFactory() {
-        return createVirtualThreadFactory();
-    }
-
-    /**
      * Creates a new {@link ExecutorService} that assigns a virtual thread to each submitted task.
      * This method provides an executor service designed for lightweight concurrency tasks using virtual threads.
      *
      * @return a new {@link ExecutorService} configured to create a virtual thread for every task,
      * or {@code null} if virtual threads are not supported on the current JVM.
      */
+    @SuppressWarnings("unused")
     public static ExecutorService newVirtualThreadPerTaskExecutor() {
         return createVirtualThreadPerTaskExecutor();
     }
@@ -69,6 +57,7 @@ public class Threads {
      * @param fallbackExecutor the executor service to fallback to if virtual threads are not supported
      * @return a virtual thread-per-task executor if available, otherwise the provided fallback executor
      */
+    @SuppressWarnings("unused")
     public static ExecutorService newVirtualThreadPerTaskExecutorOrProvided(ExecutorService fallbackExecutor) {
         ExecutorService executor = createVirtualThreadPerTaskExecutor();
         return executor != null ? executor : fallbackExecutor;
@@ -102,6 +91,7 @@ public class Threads {
      * @param workQueue       the queue to use for holding tasks before they are executed.
      * @return an {@link ExecutorService} instance based on the specified configurations or a virtual thread-based executor if supported.
      */
+    @SuppressWarnings("all")
     public static ExecutorService getExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         if (isVirtualThreadSupported() && METHOD_VIRTUAL_PER_TASK_EXECUTOR != null) {
             try {
@@ -131,6 +121,7 @@ public class Threads {
      * @param workQueue       the queue to use for holding tasks before they are executed.
      * @return an {@link ExecutorService} instance configured according to the specified parameters.
      */
+    @SuppressWarnings("unused")
     public static ExecutorService getPureExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         return new ThreadPoolExecutor(
                 corePoolSize,
@@ -193,6 +184,7 @@ public class Threads {
      * @param accessible whether the method should be made accessible
      * @return the retrieved Method instance, or null if the method cannot be found or an exception occurs
      */
+    @SuppressWarnings("all")
     private static @Nullable Method getMethodWithFallback(Class<?> clazz, String methodName, boolean accessible) {
         try {
             Method method = clazz.getMethod(methodName);
@@ -210,6 +202,7 @@ public class Threads {
      * @return the Method object representing the virtual thread factory creation method,
      * or null if the required methods are not accessible or unsupported.
      */
+    @SuppressWarnings("all")
     private static @Nullable Method getVirtualThreadFactoryMethod() {
         try {
             Method methodOfVirtual = Thread.class.getMethod("ofVirtual");

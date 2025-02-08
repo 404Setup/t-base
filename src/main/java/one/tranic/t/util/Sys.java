@@ -24,6 +24,7 @@ public class Sys {
     }
 
     // Since Java 1.1, but this library has not supported it either
+    @SuppressWarnings("unused")
     public static int getCurrentJVMClassVersion() {
         return 44 + cachedJvmVersion;
     }
