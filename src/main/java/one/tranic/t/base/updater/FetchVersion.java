@@ -87,6 +87,7 @@ public class FetchVersion implements AutoCloseable, Runnable {
     @SuppressWarnings("all")
     public void run() {
         try {
+            this.hasUpdate();
             for (; ; ) {
                 TimeUnit.HOURS.sleep(SLEEP_HOURS);
                 this.hasUpdate();
