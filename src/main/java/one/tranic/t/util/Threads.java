@@ -51,6 +51,64 @@ public class Threads {
     }
 
     /**
+     * Creates a new thread to execute the provided {@link Runnable} task.
+     * If virtual threads are supported by the underlying JVM, this method will
+     * create a virtual thread using a suitable thread factory; otherwise, it will
+     * fall back to a standard thread implementation.
+     *
+     * @param runnable the {@link Runnable} task to be executed by the new thread.
+     * @return a {@link Thread} configured to execute the provided task, not null.
+     */
+    public static @NotNull Thread newThread(Runnable runnable) {
+        return newVirtualThreadFactoryOrDefault().newThread(runnable);
+    }
+
+    /**
+     * Creates a new thread using the provided {@link Runnable} and assigns it the specified name.
+     * This method attempts to use a virtual thread factory if virtual threads are supported; otherwise,
+     * it falls back to a default thread factory implementation.
+     *
+     * @param runnable the {@link Runnable} task to be executed by the thread
+     * @param name     the name to assign to the created thread
+     * @return the created {@link Thread} instance
+     */
+    public static @NotNull Thread newThread(Runnable runnable, String name) {
+        var thread = newVirtualThreadFactoryOrDefault().newThread(runnable);
+        thread.setName(name);
+        return thread;
+    }
+
+    /**
+     * Creates a new thread with the given runnable, name, and daemon status.
+     *
+     * @param runnable the {@code Runnable} to be executed by the new thread.
+     * @param name     the name of the new thread.
+     * @param daemon   whether the thread should be a daemon thread.
+     * @return a new {@code Thread} instance configured with the specified parameters.
+     */
+    public static @NotNull Thread newThread(Runnable runnable, String name, boolean daemon) {
+        var thread = newThread(runnable, name);
+        thread.setDaemon(daemon);
+        return thread;
+    }
+
+    /**
+     * Creates a new thread with the specified configuration.
+     * This method allows setting the thread's name, daemon status, and custom uncaught exception handler.
+     *
+     * @param runnable the task to be executed by the new thread.
+     * @param name     the name of the new thread.
+     * @param daemon   whether the new thread should be a daemon thread.
+     * @param handler  the handler to be invoked when the thread terminates due to an uncaught exception.
+     * @return a newly created thread configured with the given properties.
+     */
+    public static @NotNull Thread newThread(Runnable runnable, String name, boolean daemon, Thread.UncaughtExceptionHandler handler) {
+        var thread = newThread(runnable, name, daemon);
+        thread.setUncaughtExceptionHandler(handler);
+        return thread;
+    }
+
+    /**
      * Creates a new virtual thread-per-task executor if supported by the runtime environment,
      * otherwise returns the provided fallback executor.
      *
