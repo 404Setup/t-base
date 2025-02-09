@@ -19,44 +19,49 @@ public enum Platform {
      * Represents the Velocity platform.
      * Velocity is a modern Minecraft proxy server designed for high performance and flexibility.
      */
-    Velocity,
+    Velocity("com.velocitypowered.api.proxy.Proxy"),
 
     /**
      * Represents the BungeeCord platform.
      * BungeeCord is a classic Minecraft proxy server.
      */
-    BungeeCord,
+    BungeeCord("net.md_5.bungee.api.CommandSender"),
 
     /**
      * Represents the Spigot platform.
      * Spigot is a highly optimized Minecraft server software, built from the vanilla Minecraft server,
      * and is widely used for plugin support and performance improvements.
      */
-    Spigot,
+    Spigot("org.bukkit.Bukkit"),
 
     /**
      * Represents the Paper platform.
      * Paper is a fork of Spigot that further optimizes server performance and adds additional features for plugins.
      */
-    Paper,
+    Paper("io.papermc.paper.util.MCUtil"),
 
     /**
      * Represents the ShreddedPaper platform.
      * ShreddedPaper is a highly specialized fork of Paper, designed for improved threading in Minecraft servers.
      */
-    ShreddedPaper,
+    ShreddedPaper("io.multipaper.shreddedpaper.threading.ShreddedPaperTickThread"),
 
     /**
      * Represents the Folia platform.
      * Folia is a specialized fork of Paper with region-based multi-threading support for high-concurrency environments.
      */
-    Folia;
+    Folia("io.papermc.paper.threadedregions.commands.CommandServerHealth");
 
     /**
      * A cached value of the detected platform. The platform is only determined once using reflection
      * and the result is cached for future calls to {@link #get()}.
      */
     private static Platform platform;
+    private final String classPath;
+
+    Platform(String classPath) {
+        this.classPath = classPath;
+    }
 
     /**
      * Detects and returns the current platform.
@@ -73,48 +78,33 @@ public enum Platform {
         }
 
         // Test for Velocity platform
-        try {
-            Class.forName("com.velocitypowered.api.proxy.Player");
+        if (Velocity.is()) {
             platform = Velocity;
             return platform;
-        } catch (ClassNotFoundException e) {
-            // Not Velocity
         }
 
         // Test for BungeeCord platform
-        try {
-            Class.forName("net.md_5.bungee.api.CommandSender");
+        if (BungeeCord.is()) {
             platform = BungeeCord;
             return platform;
-        } catch (ClassNotFoundException e) {
-            // Not BungeeCord or its forks
         }
 
         // Test for Folia platform
-        try {
-            Class.forName("io.papermc.paper.threadedregions.commands.CommandServerHealth");
+        if (Folia.is()) {
             platform = Folia;
             return platform;
-        } catch (ClassNotFoundException e) {
-            // Not Folia or its forks
         }
 
         // Test for ShreddedPaper platform
-        try {
-            Class.forName("io.multipaper.shreddedpaper.threading.ShreddedPaperTickThread");
+        if (ShreddedPaper.is()) {
             platform = ShreddedPaper;
             return platform;
-        } catch (ClassNotFoundException e) {
-            // Not ShreddedPaper or its forks
         }
 
         // Test for Paper platform
-        try {
-            Class.forName("io.papermc.paper.util.MCUtil");
+        if (Paper.is()) {
             platform = Paper;
             return platform;
-        } catch (ClassNotFoundException e) {
-            // Default to Spigot if none of the above
         }
 
         platform = Spigot;
@@ -147,12 +137,22 @@ public enum Platform {
     /**
      * Determines whether the current platform is a Bukkit-based platform.
      *
-     * @return true if the platform is one of Paper, Folia, or ShreddedPaper; false otherwise
+     * @return true if the platform is one of Spiot, Paper, Folia, or ShreddedPaper; false otherwise
      */
     public static boolean isBukkit() {
-        return get() == Paper ||
+        return get() == Spigot ||
+                get() == Paper ||
                 get() == Folia ||
                 get() == ShreddedPaper;
+    }
+
+    /**
+     * Determines whether the current environment supports multithreading features.
+     *
+     * @return true if the environment supports multithreading, false otherwise.
+     */
+    public static boolean isMultithreading() {
+        return get() == Folia || get() == ShreddedPaper;
     }
 
     /**
@@ -181,5 +181,23 @@ public enum Platform {
             case ShreddedPaper -> "ShreddedPaper";
             case Folia -> "Folia";
         };
+    }
+
+    /**
+     * Retrieves the class path as a string.
+     *
+     * @return the class path of the current application.
+     */
+    public String getClassPath() {
+        return classPath;
+    }
+
+    /**
+     * Determines whether the specified class exists in the classpath.
+     *
+     * @return true if the class exists in the classpath; false otherwise.
+     */
+    public boolean is() {
+        return Sys.hasClass(classPath);
     }
 }
