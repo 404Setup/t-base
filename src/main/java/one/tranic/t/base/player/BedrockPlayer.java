@@ -1,6 +1,7 @@
 package one.tranic.t.base.player;
 
 import one.tranic.t.base.parse.uuid.UUIDParser;
+import one.tranic.t.util.Sys;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.cumulus.form.Form;
@@ -16,17 +17,11 @@ public class BedrockPlayer {
     private static boolean floodgate = false;
 
     static {
-        try {
-            Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+        if (Sys.hasClass("org.geysermc.floodgate.api.FloodgateApi"))
             floodgate = true;
-        } catch (ClassNotFoundException ignored) {
-        }
 
-        try {
-            Class.forName("org.geysermc.geyser.api.GeyserApi");
+        if (Sys.hasClass("org.geysermc.geyser.api.GeyserApi"))
             geyser = true;
-        } catch (ClassNotFoundException ignored) {
-        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package one.tranic.t.base.player;
 
 import com.viaversion.viaversion.api.Via;
+import one.tranic.t.util.Sys;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,14 +11,7 @@ public class ViaPlayer {
     private static final boolean isEnabled;
 
     static {
-        boolean s;
-        s = false;
-        try {
-            Class.forName(" com.viaversion.viaversion.api.Via");
-            s = true;
-        } catch (ClassNotFoundException ignored) {
-        }
-        isEnabled = s;
+        isEnabled = Sys.hasClass("com.viaversion.viaversion.api.Via");
     }
 
     /**

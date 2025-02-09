@@ -17,14 +17,10 @@ import java.util.function.Predicate;
  * based on the availability of FastUtil classes.
  */
 public class Collections {
-    private static boolean fastutil = false;
+    private static final boolean fastutil;
 
     static {
-        try {
-            Class.forName("it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap");
-            fastutil = true;
-        } catch (ClassNotFoundException ignored) {
-        }
+        fastutil = Sys.hasClass("it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap");
     }
 
     /**
