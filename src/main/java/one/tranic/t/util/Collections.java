@@ -17,11 +17,7 @@ import java.util.function.Predicate;
  * based on the availability of FastUtil classes.
  */
 public class Collections {
-    private static final boolean fastutil;
-
-    static {
-        fastutil = Sys.hasClass("it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap");
-    }
+    private static final boolean fastutil = Sys.hasClass("it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap");
 
     /**
      * Creates a new hash map that maps keys of type {@code K} to integer values.

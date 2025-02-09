@@ -13,16 +13,8 @@ import org.geysermc.geyser.api.connection.GeyserConnection;
 import java.util.UUID;
 
 public class BedrockPlayer {
-    private static boolean geyser = false;
-    private static boolean floodgate = false;
-
-    static {
-        if (Sys.hasClass("org.geysermc.floodgate.api.FloodgateApi"))
-            floodgate = true;
-
-        if (Sys.hasClass("org.geysermc.geyser.api.GeyserApi"))
-            geyser = true;
-    }
+    private static final boolean geyser = Sys.hasClass("org.geysermc.geyser.api.GeyserApi");
+    private static final boolean floodgate = Sys.hasClass("org.geysermc.floodgate.api.FloodgateApi");
 
     /**
      * Determines if a player, identified by their UUID, is a Bedrock player.

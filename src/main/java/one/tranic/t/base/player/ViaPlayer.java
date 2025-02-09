@@ -8,11 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class ViaPlayer {
-    private static final boolean isEnabled;
-
-    static {
-        isEnabled = Sys.hasClass("com.viaversion.viaversion.api.Via");
-    }
+    private static final boolean isEnabled = Sys.hasClass("com.viaversion.viaversion.api.Via");
 
     /**
      * Retrieves the protocol version of a player identified by their unique identifier (UUID).
