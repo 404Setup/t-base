@@ -30,7 +30,7 @@ public class ModrinthVersionFetcher extends VersionFetcher {
         try {
             connection = RequestWithProxyParser.openConnection(updateCheckURL);
             try (InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
-                var versions = JsonParser.gson().fromJson(reader, ModrinthVersionSource[].class);
+                var versions = JsonParser.fromJson(reader, ModrinthVersionSource[].class);
                 if (versions.length == 0) return null;
                 ModrinthVersionSource latestVersion = versions[0];
                 if (hasCompatibleLoader(latestVersion) && !Objects.equals(currentVersion, latestVersion.getVersionNumber())) {

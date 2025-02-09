@@ -1,9 +1,14 @@
 package one.tranic.t.base.parse.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 
@@ -44,5 +49,30 @@ public class JsonParser {
     @SuppressWarnings("all")
     public static <T> T requestAndParse(HttpURLConnection connection, Class<T> classOfT) throws IOException {
         return requestAndParse(connection, (Type) classOfT);
+    }
+
+    /**
+     * Parses the JSON content from the provided {@link Reader} into an object of the specified type.
+     *
+     * @param <T>      the type of the object to be returned
+     * @param json     the {@link Reader} containing the JSON content
+     * @param classOfT the {@link Class} of the object to parse the JSON into
+     * @return an instance of the specified class type populated with the parsed data
+     * @throws JsonSyntaxException if the JSON is not in the expected format
+     * @throws JsonIOException     if an error occurs while reading the JSON data
+     */
+    public static <T> T fromJson(@NotNull Reader json, @NotNull Class<T> classOfT)
+            throws JsonSyntaxException, JsonIOException {
+        return gson.fromJson(json, classOfT);
+    }
+
+    /**
+     * Converts the given object into its JSON representation.
+     *
+     * @param src the object to be converted to JSON; can be null
+     * @return a JSON-formatted string representing the given object or "null" if the input is null
+     */
+    public static String toJson(@Nullable Object src) {
+        return gson.toJson(src);
     }
 }

@@ -62,7 +62,7 @@ public class MojangAPIParser {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
-        String jsonBody = JsonParser.gson().toJson(names);
+        String jsonBody = JsonParser.toJson(names);
         try (OutputStream outputStream = connection.getOutputStream()) {
             outputStream.write(jsonBody.getBytes(StandardCharsets.UTF_8));
             outputStream.flush();
