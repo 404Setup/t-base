@@ -14,6 +14,13 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * usage:
+ * <pre>
+ *     var fetcher = new VersionFetcher(currentVersion, pluginName, apiAddress);
+ *     fetcher.start(); // don't use run.
+ * </pre>
+ */
 public abstract class VersionFetcher implements AutoCloseable, Runnable {
     private static final long CACHE_EXPIRY_MINUTES = 1440;
     private static final int SLEEP_HOURS = 2;
@@ -87,9 +94,7 @@ public abstract class VersionFetcher implements AutoCloseable, Runnable {
 
     public void start() {
         close();
-        updateThread = Threads.newVirtualThreadFactoryOrDefault().newThread(this);
-        updateThread.setName("FetchVersion-Thread");
-        updateThread.setDaemon(true);
+        updateThread = Threads.newThread(this, "FetchVersion-Thread", true);
         updateThread.start();
     }
 
