@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "one.tranic"
-version = "1.2.4"
+version = "1.2.5"
 
 repositories {
     mavenCentral()
@@ -39,6 +39,9 @@ dependencies {
     compileOnly("com.google.guava:guava:33.3.0-jre")
     compileOnly("it.unimi.dsi:fastutil:8.5.15")
     implementation("com.google.code.gson:gson:2.12.1")
+
+    implementation("one.tranic:t-thread:1.0.0")
+    implementation("one.tranic:t-proxy:1.0.0")
 
     implementation("net.kyori:adventure-api:4.18.0")
     implementation("net.kyori:adventure-text-minimessage:4.18.0")

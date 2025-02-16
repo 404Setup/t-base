@@ -1,7 +1,7 @@
 package one.tranic.t.base.player;
 
 import com.viaversion.viaversion.api.Via;
-import one.tranic.t.util.Sys;
+import one.tranic.t.thread.Sys;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 

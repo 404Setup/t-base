@@ -3,8 +3,8 @@ package one.tranic.t.base.parse.mojang;
 import com.google.gson.reflect.TypeToken;
 import one.tranic.t.base.parse.json.JsonParser;
 import one.tranic.t.base.parse.mojang.schemas.ProfileLookup;
-import one.tranic.t.base.parse.proxy.RequestWithProxyParser;
 import one.tranic.t.base.parse.uuid.UUIDParser;
+import one.tranic.t.proxy.RequestWithProxyParser;
 
 import java.io.IOException;
 import java.io.OutputStream;

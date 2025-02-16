@@ -1,5 +1,6 @@
 package one.tranic.t.util;
 
+import one.tranic.t.thread.Sys;
 import org.intellij.lang.annotations.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;

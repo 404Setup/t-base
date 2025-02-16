@@ -1,9 +1,9 @@
 package one.tranic.t.base.updater;
 
 import one.tranic.t.base.parse.json.JsonParser;
-import one.tranic.t.base.parse.proxy.RequestWithProxyParser;
 import one.tranic.t.base.updater.schemas.modrinth.Loaders;
 import one.tranic.t.base.updater.schemas.modrinth.ModrinthVersionSource;
+import one.tranic.t.proxy.RequestWithProxyParser;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;

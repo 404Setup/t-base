@@ -72,6 +72,48 @@ public class Message {
     }
 
     /**
+     * Converts a {@link Component} into its string representation using the legacy section
+     * serialization format.
+     *
+     * @param component the {@link Component} to be serialized; must not be null
+     * @return the serialized string representation of the given {@link Component}
+     */
+    public static String toString(@NotNull Component component) {
+        return LegacyComponentSerializer.legacySection().serialize(component);
+    }
+
+    /**
+     * Converts a legacy text string into an array of BaseComponent objects.
+     * If the current platform is not BungeeCord, the method returns null.
+     *
+     * @param message the legacy text string to be converted; must not be null
+     * @return an array of BaseComponent objects representing the converted text,
+     * or null if the platform is not BungeeCord
+     */
+    public static net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull String message) {
+        Validate.notNull(message, "Message cannot be null");
+        if (Platform.get() != Platform.BungeeCord) return null;
+        return net.md_5.bungee.api.chat.TextComponent.fromLegacyText(message);
+    }
+
+    /**
+     * Converts a {@link Component} to an array of {@link net.md_5.bungee.api.chat.BaseComponent}.
+     * <p>
+     * This method leverages the {@code toString(Component)} method to serialize the input
+     * {@link Component} into a legacy string format and then transforms it into BungeeCord's
+     * {@link Component} array representation.
+     *
+     * @param component The {@link Component} to be converted. Must not be null.
+     * @return An array of {@link net.md_5.bungee.api.chat.BaseComponent} representing the provided
+     * {@link Component}, or null if a non-BungeeCord platform is detected.
+     */
+    public static net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull Component component) {
+        Validate.notNull(component, "Component cannot be null");
+        if (Platform.get() != Platform.BungeeCord) return null;
+        return toBaseComponent(toString(component));
+    }
+
+    /**
      * Registers a new locale to the list of supported locales.
      *
      * @param locale the locale to be registered; must not be null
@@ -113,47 +155,5 @@ public class Message {
      */
     public void resetSupportedLocales() {
         supportedLocales.clear();
-    }
-
-    /**
-     * Converts a {@link Component} into its string representation using the legacy section
-     * serialization format.
-     *
-     * @param component the {@link Component} to be serialized; must not be null
-     * @return the serialized string representation of the given {@link Component}
-     */
-    public static String toString(@NotNull Component component) {
-        return LegacyComponentSerializer.legacySection().serialize(component);
-    }
-
-    /**
-     * Converts a legacy text string into an array of BaseComponent objects.
-     * If the current platform is not BungeeCord, the method returns null.
-     *
-     * @param message the legacy text string to be converted; must not be null
-     * @return an array of BaseComponent objects representing the converted text,
-     * or null if the platform is not BungeeCord
-     */
-    public static net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull String message) {
-        Validate.notNull(message, "Message cannot be null");
-        if (Platform.get() != Platform.BungeeCord) return null;
-        return net.md_5.bungee.api.chat.TextComponent.fromLegacyText(message);
-    }
-
-    /**
-     * Converts a {@link Component} to an array of {@link net.md_5.bungee.api.chat.BaseComponent}.
-     * <p>
-     * This method leverages the {@code toString(Component)} method to serialize the input
-     * {@link Component} into a legacy string format and then transforms it into BungeeCord's
-     * {@link Component} array representation.
-     *
-     * @param component The {@link Component} to be converted. Must not be null.
-     * @return An array of {@link net.md_5.bungee.api.chat.BaseComponent} representing the provided
-     * {@link Component}, or null if a non-BungeeCord platform is detected.
-     */
-    public static net.md_5.bungee.api.chat.BaseComponent[] toBaseComponent(@NotNull Component component) {
-        Validate.notNull(component, "Component cannot be null");
-        if (Platform.get() != Platform.BungeeCord) return null;
-        return toBaseComponent(toString(component));
     }
 }

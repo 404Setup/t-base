@@ -1,8 +1,8 @@
 package one.tranic.t.base;
 
 import one.tranic.t.base.command.Operator;
-import one.tranic.t.base.command.source.CommandSource;
-import one.tranic.t.util.Threads;
+import one.tranic.t.base.command.source.SystemCommandSource;
+import one.tranic.t.thread.T2hread;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -11,12 +11,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 public class TBase {
-    public final static ExecutorService executor = Threads.getExecutor();
+    public final static ExecutorService executor = T2hread.getExecutor();
     //public final static List<String> EMPTY_LIST = Collections.newUnmodifiableList();
-    public static final CommandSource<?, ?> CONSOLE_SOURCE;
+    public static final SystemCommandSource<?, ?> CONSOLE_SOURCE;
     private final static Operator operator = new Operator("Console", UUID.fromString("05b11eee-24db-4a21-ba9d-e12e8df9a92f"));
     private static final String packageName;
-    private static Supplier<CommandSource<?, ?>> getConsoleSourceSupplier;
+    private static Supplier<SystemCommandSource<?, ?>> getConsoleSourceSupplier;
 
     static {
         packageName = getRootPath();
@@ -57,13 +57,13 @@ public class TBase {
     }
 
     /**
-     * Retrieves the console as a {@link CommandSource}, an abstraction representing
+     * Retrieves the console as a {@link SystemCommandSource}, an abstraction representing
      * the source of command execution or interaction.
      *
-     * @return a {@link CommandSource} instance representing the console source, typically used
+     * @return a {@link SystemCommandSource} instance representing the console source, typically used
      * for administrative or automated command execution.
      */
-    public static @Nullable CommandSource<?, ?> getConsoleSource() {
+    public static @Nullable SystemCommandSource<?, ?> getConsoleSource() {
         if (getConsoleSourceSupplier == null) return null;
         return getConsoleSourceSupplier.get();
     }

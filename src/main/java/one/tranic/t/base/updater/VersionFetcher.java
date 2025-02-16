@@ -2,8 +2,8 @@ package one.tranic.t.base.updater;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import one.tranic.t.base.parse.proxy.RequestWithProxyParser;
-import one.tranic.t.util.Threads;
+import one.tranic.t.proxy.RequestWithProxyParser;
+import one.tranic.t.thread.T2hread;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -94,7 +94,7 @@ public abstract class VersionFetcher implements AutoCloseable, Runnable {
 
     public void start() {
         close();
-        updateThread = Threads.newThread(this, "FetchVersion-Thread", true);
+        updateThread = T2hread.newThread(this, "FetchVersion-Thread", true);
         updateThread.start();
     }
 
