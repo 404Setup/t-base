@@ -42,6 +42,7 @@ dependencies {
 
     implementation("one.tranic:t-thread:1.0.0")
     implementation("one.tranic:t-proxy:1.0.0")
+    implementation("one.tranic:t-utils:1.0.0")
 
     implementation("net.kyori:adventure-api:4.18.0")
     implementation("net.kyori:adventure-text-minimessage:4.18.0")
