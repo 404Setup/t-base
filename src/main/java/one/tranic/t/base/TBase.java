@@ -12,15 +12,14 @@ import java.util.function.Supplier;
 
 public class TBase {
     public final static ExecutorService executor = T2hread.getExecutor();
-    //public final static List<String> EMPTY_LIST = Collections.newUnmodifiableList();
-    public static final SystemCommandSource<?, ?> CONSOLE_SOURCE;
     private final static Operator operator = new Operator("Console", UUID.fromString("05b11eee-24db-4a21-ba9d-e12e8df9a92f"));
     private static final String packageName;
+    //public final static List<String> EMPTY_LIST = Collections.newUnmodifiableList();
+    private static SystemCommandSource<?, ?> CONSOLE_SOURCE;
     private static Supplier<SystemCommandSource<?, ?>> getConsoleSourceSupplier;
 
     static {
         packageName = getRootPath();
-        CONSOLE_SOURCE = getConsoleSource();
     }
 
     /**
@@ -64,8 +63,12 @@ public class TBase {
      * for administrative or automated command execution.
      */
     public static @Nullable SystemCommandSource<?, ?> getConsoleSource() {
-        if (getConsoleSourceSupplier == null) return null;
-        return getConsoleSourceSupplier.get();
+        if (CONSOLE_SOURCE != null) return CONSOLE_SOURCE;
+        if (getConsoleSourceSupplier != null) {
+            CONSOLE_SOURCE = getConsoleSourceSupplier.get();
+            return CONSOLE_SOURCE;
+        }
+        return null;
     }
 
     /**

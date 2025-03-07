@@ -1,4 +1,4 @@
-package one.tranic.t.base.parse.network;
+package one.tranic.t.base.parse.resource;
 
 import com.google.common.io.Resources;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class NetworkParser {
+public class ResourceParser {
     /**
      * Retrieves an InputStream for a specified resource file by its filename.
      *

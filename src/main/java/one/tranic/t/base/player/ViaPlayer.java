@@ -1,14 +1,14 @@
 package one.tranic.t.base.player;
 
 import com.viaversion.viaversion.api.Via;
-import one.tranic.t.thread.Sys;
+import one.tranic.t.utils.Reflect;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class ViaPlayer {
-    private static final boolean isEnabled = Sys.hasClass("com.viaversion.viaversion.api.Via");
+    private static final boolean isEnabled = Reflect.hasClass("com.viaversion.viaversion.api.Via");
 
     /**
      * Retrieves the protocol version of a player identified by their unique identifier (UUID).

@@ -2,12 +2,6 @@ package one.tranic.t.base.exception;
 
 /**
  * A custom exception that indicates an operation involving an unsupported or invalid type.
- * <p>
- * This exception is a subclass of {@code RuntimeException} and is typically used to signal
- * situations where a type provided to a method or operation is invalid or not supported.
- * <p>
- * This exception can be constructed with a custom message, an existing exception, or
- * automatically include the class name of the unsupported object to provide additional context.
  */
 public class UnsupportedTypeException extends RuntimeException {
     /**

@@ -1,7 +1,7 @@
 package one.tranic.t.base.player;
 
 import one.tranic.t.base.parse.uuid.UUIDParser;
-import one.tranic.t.thread.Sys;
+import one.tranic.t.utils.Reflect;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.cumulus.form.Form;
@@ -13,8 +13,8 @@ import org.geysermc.geyser.api.connection.GeyserConnection;
 import java.util.UUID;
 
 public class BedrockPlayer {
-    private static final boolean geyser = Sys.hasClass("org.geysermc.geyser.api.GeyserApi");
-    private static final boolean floodgate = Sys.hasClass("org.geysermc.floodgate.api.FloodgateApi");
+    private static final boolean geyser = Reflect.hasClass("org.geysermc.geyser.api.GeyserApi");
+    private static final boolean floodgate = Reflect.hasClass("org.geysermc.floodgate.api.FloodgateApi");
 
     /**
      * Determines if a player, identified by their UUID, is a Bedrock player.
