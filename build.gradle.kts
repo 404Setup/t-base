@@ -33,7 +33,7 @@ dependencies {
 
     compileOnly("com.viaversion:viaversion-api:5.2.2-SNAPSHOT")
 
-    compileOnly("com.google.guava:guava:33.3.0-jre")
+    compileOnly("com.google.guava:guava:33.4.0-jre")
     compileOnly("it.unimi.dsi:fastutil:8.5.15")
     implementation("com.google.code.gson:gson:2.12.1")
 
