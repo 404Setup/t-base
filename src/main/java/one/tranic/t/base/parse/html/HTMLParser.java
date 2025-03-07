@@ -1,6 +1,6 @@
 package one.tranic.t.base.parse.html;
 
-import one.tranic.t.util.Collections;
+import one.tranic.t.utils.Collections;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Base64;

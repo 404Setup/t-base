@@ -1,6 +1,6 @@
 package one.tranic.t.base.player;
 
-import one.tranic.t.util.Collections;
+import one.tranic.t.utils.Collections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

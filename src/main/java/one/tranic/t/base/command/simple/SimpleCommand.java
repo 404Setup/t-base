@@ -3,7 +3,7 @@ package one.tranic.t.base.command.simple;
 import net.kyori.adventure.text.Component;
 import one.tranic.t.base.TBase;
 import one.tranic.t.base.command.source.CommandSource;
-import one.tranic.t.util.Platform;
+import one.tranic.t.utils.Platform;
 
 /**
  * Abstract base class representing a command in a multi-platform environment.

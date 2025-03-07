@@ -1,6 +1,6 @@
 package one.tranic.t.base.parse.version;
 
-import one.tranic.t.util.Collections;
+import one.tranic.t.utils.Collections;
 
 import java.util.List;
 import java.util.regex.Pattern;

@@ -5,8 +5,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import one.tranic.t.util.Collections;
-import one.tranic.t.util.Platform;
+import one.tranic.t.utils.Collections;
+import one.tranic.t.utils.Platform;
 
 import java.util.List;
 import java.util.Objects;

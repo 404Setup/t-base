@@ -2,7 +2,7 @@ package one.tranic.t.base.player;
 
 import net.kyori.adventure.text.Component;
 import one.tranic.t.base.TBase;
-import one.tranic.t.util.ProtocolVersion;
+import one.tranic.t.utils.ProtocolVersion;
 import org.geysermc.cumulus.form.Form;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

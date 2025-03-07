@@ -2,8 +2,8 @@ package one.tranic.t.base.message;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import one.tranic.t.util.Collections;
-import one.tranic.t.util.Platform;
+import one.tranic.t.utils.Collections;
+import one.tranic.t.utils.Platform;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 
