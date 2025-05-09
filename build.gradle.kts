@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "one.tranic"
-version = "1.2.8"
+version = "1.2.9"
 
 repositories {
     mavenCentral()
@@ -39,7 +39,7 @@ dependencies {
 
     implementation("one.tranic:t-thread:1.0.1")
     implementation("one.tranic:t-proxy:1.0.1")
-    implementation("one.tranic:t-utils:1.2.3")
+    implementation("one.tranic:t-utils:1.3.0")
 
     implementation("net.kyori:adventure-api:4.21.0")
     implementation("net.kyori:adventure-text-minimessage:4.21.0")
