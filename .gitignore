@@ -44,3 +44,5 @@ bin/
 
 ### Project ###
 gradle.properties
+
+libs/*
