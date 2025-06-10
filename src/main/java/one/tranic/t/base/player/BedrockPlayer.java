@@ -93,7 +93,7 @@ public class BedrockPlayer {
     public static int getSubscribeId(UUID uuid) {
         if (floodgate) {
             FloodgatePlayer player = FloodgateApi.getInstance().getPlayer(uuid);
-            if (player != null) return ((FloodgatePlayerImpl) player).toBedrockData().getSubscribeId();
+            if (player != null) return ((FloodgatePlayerImpl) player).getSubscribeId();
         }
         return -1;
     }
