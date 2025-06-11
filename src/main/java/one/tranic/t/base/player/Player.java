@@ -1,16 +1,14 @@
 package one.tranic.t.base.player;
 
 import net.kyori.adventure.text.Component;
-import one.tranic.t.base.TBase;
 import one.tranic.t.utils.minecraft.ProtocolVersion;
-import org.geysermc.cumulus.form.Form;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("unused")
 public interface Player<C> {
     static @Nullable Player<?> getPlayer(@NotNull String name) {
         return Players.getPlayer(name);
@@ -18,6 +16,15 @@ public interface Player<C> {
 
     static @Nullable Player<?> getPlayer(@NotNull UUID uuid) {
         return Players.getPlayer(uuid);
+    }
+
+    /**
+     * Converts the current player instance to a BedrockPlayer.
+     *
+     * @return a {@link BedrockPlayer} instance if the player is a Bedrock player, or null if not applicable
+     */
+    default @Nullable BedrockPlayer toBedrockPlayer() {
+        return BedrockPlayer.of(this);
     }
 
     /**
@@ -33,18 +40,6 @@ public interface Player<C> {
      * @return the universally unique identifier (UUID) of the player
      */
     @NotNull UUID getUniqueId();
-
-    /**
-     * Retrieves the Xbox Unique Identifier (XUID) for the player if the player is a Bedrock player.
-     * This method determines whether the player is a Bedrock player and, if so, utilizes
-     * the {@link BedrockPlayer#getXUID(UUID)} implementation to fetch the XUID.
-     *
-     * @return the XUID as a string if the player is identified as a Bedrock player;
-     * otherwise, {@code null}.
-     */
-    default @Nullable String getXUID() {
-        return isBedrockPlayer() ? BedrockPlayer.getXUID(getUniqueId()) : null;
-    }
 
     /**
      * Retrieves the protocol version of the player.
@@ -83,22 +78,6 @@ public interface Player<C> {
      * @return the connected host as a string.
      */
     @NotNull String getConnectedHost();
-
-    /**
-     * Sends a form to the player associated with the current instance.
-     * This method utilizes the {@link BedrockPlayer} to deliver the form,
-     * associating it with the unique identifier (UUID) of the player.
-     *
-     * @param form the form to be sent to the player; must not be null
-     * @return {@code true} if the form was successfully sent, {@code false} otherwise
-     */
-    default boolean sendForm(@NotNull Form form) {
-        return BedrockPlayer.sendForm(getUniqueId(), form);
-    }
-
-    default @NotNull CompletableFuture<Boolean> sendFormAsync(@NotNull Form form) {
-        return TBase.runAsync(() -> sendForm(form));
-    }
 
     /**
      * Determines whether the player associated with this instance is a Bedrock player.

@@ -11,6 +11,7 @@ import org.geysermc.floodgate.player.FloodgatePlayerImpl;
 import org.geysermc.geyser.api.GeyserApi;
 import org.geysermc.geyser.api.connection.GeyserConnection;
 import org.geysermc.geyser.session.GeyserSession;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -18,15 +19,29 @@ public class BedrockPlayer {
     private static final boolean geyser = Reflect.hasClass("org.geysermc.geyser.api.GeyserApi");
     private static final boolean floodgate = Reflect.hasClass("org.geysermc.floodgate.api.FloodgateApi");
 
+    private final Player player;
+    private final Object bedrockPlayer;
+
+    protected BedrockPlayer(@NotNull Player player) {
+        this.player = player;
+        this.bedrockPlayer = getBedrockPlayer(player.getUniqueId());
+    }
+
     /**
-     * Determines if a player, identified by their UUID, is a Bedrock player.
-     * <p>
-     * This method uses either the Floodgate or Geyser API to make the determination,
-     * depending on their availability, and falls back to checking if the player is
-     * a Floodgate player.
+     * Creates a new {@link BedrockPlayer} instance from the provided {@link Player}.
      *
-     * @param uuid the unique identifier of the player
-     * @return true if the player is a Bedrock player, false otherwise
+     * @param player the {@link Player} to convert to a {@link BedrockPlayer}; must not be null
+     * @return a new {@link BedrockPlayer} instance associated with the given {@link Player}
+     */
+    public static BedrockPlayer of(@NotNull Player player) {
+        return new BedrockPlayer(player);
+    }
+
+    /**
+     * Determines whether the specified player, identified by their UUID, is a Bedrock player.
+     *
+     * @param uuid the universally unique identifier (UUID) of the player to check
+     * @return true if the specified player is a Bedrock player, otherwise false
      */
     public static boolean isBedrockPlayer(UUID uuid) {
         if (floodgate)
@@ -36,12 +51,11 @@ public class BedrockPlayer {
     }
 
     /**
-     * Determines whether the provided UUID string corresponds to a Floodgate player.
-     * This method checks if the UUID string, with dashes removed, starts with a specific prefix
-     * associated with Floodgate players.
+     * Checks if a given UUID string represents a Floodgate player by verifying
+     * if it starts with the Floodgate UUID prefix.
      *
-     * @param uuid the UUID string to be checked, expected in the standard UUID format with dashes
-     * @return true if the UUID belongs to a Floodgate player, false otherwise
+     * @param uuid the UUID string of the player, expected to contain dashes and not null
+     * @return {@code true} if the UUID represents a Floodgate player, {@code false} otherwise
      */
     public static boolean isFloodgatePlayer(String uuid) {
         final String FLOODGATE_UUID_PREFIX = "0000000000000000";
@@ -51,206 +65,220 @@ public class BedrockPlayer {
     }
 
     /**
-     * Determines whether the player associated with the given UUID is a Floodgate player.
-     * This method converts the UUID to a string and checks if it matches the Floodgate criteria.
+     * Determines if a player with the given UUID is a Floodgate player.
      *
-     * @param uuid the unique identifier (UUID) of the player to be checked
-     * @return true if the player is identified as a Floodgate player; false otherwise
+     * @param uuid the universally unique identifier (UUID) of the player to check
+     * @return true if the player is a Floodgate player, false otherwise
      */
     public static boolean isFloodgatePlayer(UUID uuid) {
         return isFloodgatePlayer(uuid.toString());
     }
 
     /**
-     * Gets the platform of the player associated with the given UUID.
-     * <p>
-     * This method determines the player's platform using either the Floodgate or Geyser API,
-     * based on their availability. If neither API recognizes the UUID, it returns "Java Edition".
+     * Retrieves the Bedrock player associated with the given UUID.
      *
-     * @param uuid the UUID of the player whose platform is being determined
-     * @return the platform of the player as a string, or "Java Edition" if the platform cannot be determined
+     * @param uuid the unique identifier of the player to retrieve
+     * @return the Bedrock player object if found, otherwise null
      */
-    public static @NonNull String getPlatform(UUID uuid) {
-        if (floodgate) {
-            FloodgatePlayer player = FloodgateApi.getInstance().getPlayer(uuid);
-            if (player != null) return player.getDeviceOs().toString();
-        } else if (geyser) {
-            @Nullable GeyserConnection player = GeyserApi.api().connectionByUuid(uuid);
-            if (player != null) return player.platform().toString();
-        }
-        return "Java Edition";
-    }
-
-    /**
-     * Retrieves the subscribe ID for a player identified by their UUID.
-     * This method uses the Floodgate API to check if the given player is a Bedrock player
-     * and returns the corresponding subscribe ID. If the player is not a Bedrock player,
-     * or the Floodgate API is unavailable, it returns -1.
-     *
-     * @param uuid the unique identifier (UUID) of the player whose subscribe ID is to be retrieved
-     * @return the subscribe ID of the player if available; otherwise, -1
-     */
-    public static int getSubscribeId(UUID uuid) {
-        if (floodgate) {
-            FloodgatePlayer player = FloodgateApi.getInstance().getPlayer(uuid);
-            if (player != null) return ((FloodgatePlayerImpl) player).getSubscribeId();
-        }
-        return -1;
-    }
-
-    /**
-     * Retrieves the device ID of a player identified by their UUID.
-     * This method uses the Geyser API to fetch the device ID if available.
-     * If the player is not associated with Geyser or the API does not provide data, it returns null.
-     *
-     * @param uuid the unique identifier (UUID) of the player whose device ID is to be retrieved
-     * @return the device ID of the player if available, or null if the player is not associated with Geyser or the data is unavailable
-     */
-    public static @Nullable String getDeviceId(UUID uuid) {
-        if (geyser) {
-            @Nullable GeyserConnection player = GeyserApi.api().connectionByUuid(uuid);
-            if (player != null)
-                return ((GeyserSession) player).getClientData().getDeviceId();
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves the device model of a player identified by their UUID.
-     * This method uses the Geyser API to obtain the device model if the player is a Bedrock player.
-     * If the Geyser API is unavailable or the player is not recognized, the method will return null.
-     *
-     * @param uuid the unique identifier of the player whose device model is being retrieved
-     * @return the device model as a string if available, or {@code null} if the player is not recognized or the device model cannot be determined
-     */
-    public static @Nullable String getDeviceModel(UUID uuid) {
-        if (geyser) {
-            @Nullable GeyserConnection player = GeyserApi.api().connectionByUuid(uuid);
-            if (player != null) return ((GeyserSession) player).getClientData().getDeviceModel();
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves the input mode of a player identified by their UUID.
-     * This method uses the Geyser or Floodgate API (if available) to determine the player's input mode.
-     * If neither API provides information about the player's input mode, the method returns null.
-     *
-     * @param uuid the unique identifier of the player whose input mode is to be retrieved
-     * @return the input mode of the player as a string if available; otherwise, null
-     */
-    public static @Nullable String getInputMode(UUID uuid) {
-        if (geyser) {
-            @Nullable GeyserConnection player = GeyserApi.api().connectionByUuid(uuid);
-            if (player != null) return player.inputMode().name();
-        }
-        if (floodgate) {
-            FloodgatePlayer player = FloodgateApi.getInstance().getPlayer(uuid);
-            if (player != null) return player.getInputMode().name();
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves the client random ID of a player identified by their UUID.
-     * This method uses the Geyser API to fetch the client random ID for Bedrock players if available.
-     * If the player is not found or the Geyser API is not accessible, it returns -1.
-     *
-     * @param uuid the unique identifier of the player whose client random ID is being retrieved
-     * @return the client random ID of the player if available; otherwise, -1
-     */
-    public static long getClientRandomId(UUID uuid) {
-        if (geyser) {
-            @Nullable GeyserConnection player = GeyserApi.api().connectionByUuid(uuid);
-            if (player != null) return ((GeyserSession) player).getClientData().getClientRandomId();
-        }
-        return -1;
-    }
-
-    /**
-     * Retrieves the Bedrock player object associated with the given UUID.
-     * This method uses the Floodgate or Geyser API to determine the player,
-     * depending on their availability. If neither API is available or
-     * the UUID does not correspond to a Bedrock player, it returns null.
-     *
-     * @param uuid the unique identifier of the player
-     * @return the Bedrock player object if available; otherwise, null
-     */
-    public static @Nullable Object getBedrockPlayer(UUID uuid) {
+    private static @Nullable Object getBedrockPlayer(UUID uuid) {
         return floodgate ? FloodgateApi.getInstance().getPlayer(uuid) :
                 geyser ? GeyserApi.api().connectionByUuid(uuid) : null;
     }
 
     /**
-     * Retrieves the XUID (Xbox Unique Identifier) of a player identified by their UUID.
-     * <p>
-     * This method checks for the availability of the Floodgate or Geyser API and
-     * uses the corresponding integration to obtain the player's XUID.
+     * Checks if there is a Geyser instance available.
      *
-     * @param uuid the unique identifier (UUID) of the player whose XUID is to be retrieved
-     * @return the XUID of the player if available; otherwise, {@code null}
+     * @return true if a Geyser instance is available; false otherwise
      */
-    public static @Nullable String getXUID(UUID uuid) {
-        if (floodgate) {
-            FloodgatePlayer player = FloodgateApi.getInstance().getPlayer(uuid);
-            if (player != null) return player.getXuid();
-        } else if (geyser) {
-            @Nullable GeyserConnection player = GeyserApi.api().connectionByUuid(uuid);
-            if (player != null) return player.xuid();
+    public static boolean hasGeyser() {
+        return geyser;
+    }
+
+    /**
+     * Checks if the Floodgate integration is active.
+     *
+     * @return true if Floodgate is enabled, false otherwise
+     */
+    public static boolean hasFloodgate() {
+        return floodgate;
+    }
+
+    /**
+     * Retrieves the associated player instance.
+     *
+     * @return the {@link Player} instance associated with this object; never null
+     */
+    public @NotNull Player player() {
+        return player;
+    }
+
+    /**
+     * Determines if the current player is a Floodgate player.
+     * <p>
+     * A Floodgate player is a Bedrock player connected through the Floodgate plugin.
+     *
+     * @return true if the player is a Floodgate player, false otherwise
+     */
+    public boolean isFloodgatePlayer() {
+        return bedrockPlayer != null && floodgate && bedrockPlayer instanceof FloodgatePlayer;
+    }
+
+    /**
+     * Determines the platform type of the player.
+     *
+     * @return the platform type of the player as a non-null string. Possible values include specific platform names
+     * from Floodgate or Geyser, or "Java Edition" for non-Bedrock players.
+     */
+    public @NonNull String platform() {
+        if (bedrockPlayer != null) {
+            if (floodgate) {
+                return ((FloodgatePlayer) bedrockPlayer).getDeviceOs().toString();
+            } else if (geyser) {
+                return ((GeyserConnection) bedrockPlayer).platform().toString();
+            }
         }
-        return null;
+        return "Java Edition";
     }
 
     /**
-     * Sends a form to a player identified by their UUID.
+     * Retrieves the subscription ID of the current Bedrock player instance if available.
      * <p>
-     * This method leverages either the Floodgate or Geyser API, depending on their availability, to deliver the form.
-     * <p>
-     * If neither API is available, the method will return false.
+     * The method checks whether the player is a Floodgate player and
+     * returns their associated subscription ID. If the player is not a Floodgate player
+     * or the Bedrock player instance is null, it returns -1.
      *
-     * @param uuid the unique identifier of the player to whom the form should be sent
-     * @param form the form object to be sent to the player
-     * @return true if the form was successfully sent using Floodgate or Geyser; false otherwise
+     * @return the subscription ID of the Floodgate player, or -1 if unavailable
      */
-    public static boolean sendForm(UUID uuid, Form form) {
-        if (floodgate)
-            return FloodgateApi.getInstance().sendForm(uuid, form);
-        if (geyser) return GeyserApi.api().sendForm(uuid, form);
-        return false;
-    }
-
-    /**
-     * Retrieves the ping of a player identified by their UUID.
-     * <p>
-     * This method uses the Geyser API to determine the ping of a Bedrock player if available.
-     * If the player is not a Bedrock player or the Geyser API is not available, it returns -1.
-     *
-     * @param uuid the unique identifier of the player whose ping is to be retrieved
-     * @return the ping of the player, or -1 if unable to determine
-     */
-    public static long getPing(UUID uuid) {
-        if (geyser) {
-            @Nullable GeyserConnection geyserPlayer = GeyserApi.api().connectionByUuid(uuid);
-            if (geyserPlayer != null) return geyserPlayer.ping();
+    public int subscribeId() {
+        if (bedrockPlayer != null && floodgate) {
+            return ((FloodgatePlayerImpl) bedrockPlayer).getSubscribeId();
         }
         return -1;
     }
 
     /**
-     * Determines if the player has access to the Geyser platform compatibility integration.
+     * Retrieves the device ID of the Bedrock player.
+     * <p>
+     * If the player is a Bedrock player and Geyser is enabled, this method fetches
+     * the device ID associated with the player's session.
      *
-     * @return {@code true} if the player has access to Geyser; {@code false} otherwise.
+     * @return the device ID of the player, or {@code null} if the player is not a
+     * Bedrock player, Geyser is not enabled, or if the device ID is unavailable
      */
-    public boolean hasGeyser() {
-        return geyser;
+    public @Nullable String deviceId() {
+        if (bedrockPlayer != null && geyser) {
+            return ((GeyserSession) bedrockPlayer).getClientData().getDeviceId();
+        }
+        return null;
     }
 
     /**
-     * Checks if the player has Floodgate integration enabled.
+     * Retrieves the device model associated with the Bedrock player.
+     * <p>
+     * If the player is a Bedrock player and the Geyser integration is available, this method
+     * fetches the device model from the client's data.
      *
-     * @return {@code true} if the player has Floodgate integration; {@code false} otherwise.
+     * @return the device model of the Bedrock player as a string, or {@code null} if unavailable
      */
-    public boolean hasFloodgate() {
-        return floodgate;
+    public @Nullable String deviceModel() {
+        if (bedrockPlayer != null && geyser) {
+            return ((GeyserSession) bedrockPlayer).getClientData().getDeviceModel();
+        }
+        return null;
+    }
+
+    /**
+     * Determines the input mode used by the Bedrock player, if applicable.
+     * <p>
+     * The input mode can vary based on the Bedrock player's connection and settings,
+     * such as Floodgate or Geyser integration.
+     *
+     * @return a string representation of the input mode if the Bedrock player is connected via Floodgate
+     * or Geyser; otherwise, returns null if the input mode cannot be determined or is not applicable.
+     */
+    public @Nullable String inputMode() {
+        if (bedrockPlayer != null) {
+            if (floodgate) {
+                return ((FloodgatePlayer) bedrockPlayer).getInputMode().name();
+            }
+            if (geyser) {
+                return ((GeyserConnection) bedrockPlayer).inputMode().name();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the client ID of the Bedrock player.
+     * <p>
+     * This method checks if the player instance is associated with Bedrock through Geyser.
+     * If so, it fetches the client random ID from the Geyser session.
+     * If the player is not a Bedrock player or the Geyser instance is not available,
+     * it returns a default value of -1.
+     *
+     * @return the client ID as a long if the player is a Geyser Bedrock player; -1 otherwise
+     */
+    public long clientID() {
+        if (bedrockPlayer != null && geyser) {
+            return ((GeyserSession) bedrockPlayer).getClientData().getClientRandomId();
+        }
+        return -1;
+    }
+
+    /**
+     * Retrieves the XUID (Xbox User ID) of the Bedrock player.
+     * <p>
+     * The method checks if the player is associated with Floodgate or Geyser
+     * and retrieves the XUID accordingly.
+     *
+     * @return the XUID of the Bedrock player as a string, or null if unavailable
+     */
+    public @Nullable String xuid() {
+        if (bedrockPlayer != null) {
+            if (floodgate) {
+                return ((FloodgatePlayer) bedrockPlayer).getXuid();
+            }
+            if (geyser) {
+                return ((GeyserConnection) bedrockPlayer).xuid();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sends a form to a Bedrock player if applicable.
+     * <p>
+     * The form will be sent through Floodgate or Geyser, depending on the player's platform.
+     *
+     * @param form the form to be sent to the player; must not be null
+     * @return true if the form was successfully sent; false otherwise
+     */
+    @SuppressWarnings("all")
+    public boolean form(@NotNull Form form) {
+        if (bedrockPlayer != null && form != null) {
+            if (floodgate) {
+                return ((FloodgatePlayer) bedrockPlayer).sendForm(form);
+            }
+            if (geyser) {
+                return ((GeyserConnection) bedrockPlayer).sendForm(form);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Retrieves the ping value of a Bedrock player if applicable.
+     * <p>
+     * This method checks if the associated player is a Bedrock player and if
+     * the Geyser integration is available.
+     *
+     * @return the ping value in milliseconds for a Bedrock player, or -1 if
+     * the player is not a Bedrock player or Geyser is not available.
+     */
+    public long ping() {
+        if (bedrockPlayer != null && geyser) {
+            return ((GeyserConnection) bedrockPlayer).ping();
+        }
+        return -1;
     }
 }

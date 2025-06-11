@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class Players {
     // Ignore the "never allocated" warning here, it will be set by the common package via reflection.
     private static Function<String, Player<?>> getPlayerWithStringMethod;

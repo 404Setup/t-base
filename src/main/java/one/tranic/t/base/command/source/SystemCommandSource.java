@@ -9,14 +9,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public abstract class SystemCommandSource<C, R> implements CommandSource<C, R> {
     private void unsupported() {
         throw new UnsupportedOperationException("Not supported by this command source");
-    }
-
-    @Override
-    public boolean isBedrockPlayer() {
-        return false;
     }
 
     @Override

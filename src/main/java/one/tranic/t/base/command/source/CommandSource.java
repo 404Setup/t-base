@@ -37,15 +37,6 @@ public interface CommandSource<C, R> {
     C getSource();
 
     /**
-     * Determines if the entity associated with this source is a Bedrock player.
-     *
-     * @return true if the source entity is a Bedrock player, otherwise false
-     */
-    default boolean isBedrockPlayer() {
-        return isPlayer() && asPlayer().isBedrockPlayer();
-    }
-
-    /**
      * Determines if the entity represented by this source is a player.
      *
      * @return true if the source is a player, otherwise false
