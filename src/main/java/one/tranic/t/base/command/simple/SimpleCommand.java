@@ -44,7 +44,7 @@ public abstract class SimpleCommand<C extends CommandSource<?, ?>> implements Si
      */
     public void sendResult(C source, Component msg, boolean withConsole) {
         if (source.isPlayer()) source.sendMessage(msg);
-        if (withConsole) TBase.getConsoleSource().sendMessage(msg);
+        if (withConsole) TBase.INSTANCE.getConsoleSource().sendMessage(msg);
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class SimpleCommand<C extends CommandSource<?, ?>> implements Si
      */
     public void sendResult(C source, String msg, boolean withConsole) {
         if (source.isPlayer()) source.sendMessage(msg);
-        if (withConsole) TBase.getConsoleSource().sendMessage(msg);
+        if (withConsole) TBase.INSTANCE.getConsoleSource().sendMessage(msg);
     }
 
     /**

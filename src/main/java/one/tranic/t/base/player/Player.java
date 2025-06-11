@@ -1,6 +1,7 @@
 package one.tranic.t.base.player;
 
 import net.kyori.adventure.text.Component;
+import one.tranic.t.base.TBase;
 import one.tranic.t.utils.minecraft.ProtocolVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,11 +12,11 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public interface Player<C> {
     static @Nullable Player<?> getPlayer(@NotNull String name) {
-        return Players.getPlayer(name);
+        return TBase.INSTANCE.getPlayer(name);
     }
 
     static @Nullable Player<?> getPlayer(@NotNull UUID uuid) {
-        return Players.getPlayer(uuid);
+        return TBase.INSTANCE.getPlayer(uuid);
     }
 
     /**

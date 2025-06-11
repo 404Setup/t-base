@@ -1,23 +1,20 @@
-package one.tranic.t.base.player;
+package one.tranic.t.base;
 
+import one.tranic.t.base.command.source.SystemCommandSource;
+import one.tranic.t.base.player.Player;
 import one.tranic.t.utils.Collections;
+import one.tranic.t.utils.minecraft.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
-public class Players {
-    // Ignore the "never allocated" warning here, it will be set by the common package via reflection.
-    private static Function<String, Player<?>> getPlayerWithStringMethod;
-    private static Function<UUID, Player<?>> getPlayerWithUUIDMethod;
-    private static Supplier<List<Player<?>>> getOnlinePlayersMethod;
-    private static Supplier<List<?>> getPlatformOnlinePlayersMethod;
-    private static Supplier<List<String>> getOnlinePlayersNameMethod;
+public interface TInterface {
+    Platform[] getSupportedPlatforms();
+
+    SystemCommandSource<?, ?> getConsoleSource();
 
     /**
      * Retrieves a player instance based on their player name.
@@ -25,9 +22,7 @@ public class Players {
      * @param name the name of the player to search for; must not be null
      * @return the {@code Player} instance corresponding to the given name, or {@code null} if no player is found
      */
-    public static @Nullable Player<?> getPlayer(@NotNull String name) {
-        return getPlayerWithStringMethod.apply(name);
-    }
+    @Nullable Player<?> getPlayer(@NotNull String name);
 
     /**
      * Retrieves a player using their unique identifier (UUID).
@@ -36,9 +31,7 @@ public class Players {
      * @return a {@code Player<?>} instance if a player with the given UUID exists;
      * otherwise, {@code null}
      */
-    public static @Nullable Player<?> getPlayer(@NotNull UUID uuid) {
-        return getPlayerWithUUIDMethod.apply(uuid);
-    }
+    @Nullable Player<?> getPlayer(@NotNull UUID uuid);
 
     /**
      * Retrieves a list of all online players currently connected to the server.
@@ -46,9 +39,7 @@ public class Players {
      * @return a {@code List} of {@code Player<?>} representing each online player;
      * the list is guaranteed to be non-null.
      */
-    public static @NotNull List<Player<?>> getOnlinePlayers() {
-        return getOnlinePlayersMethod.get();
-    }
+    @NotNull List<Player<?>> getOnlinePlayers();
 
     /**
      * Retrieves a list of alternative players who are connected to the same host
@@ -67,7 +58,7 @@ public class Players {
      * the list is guaranteed to be non-null but may be empty if no other
      * players share the same connected host
      */
-    public static @NotNull List<Player<?>> getAltPlayers(@NotNull Player<?> player) {
+    default @NotNull List<Player<?>> getAltPlayers(@NotNull Player<?> player) {
         final List<Player<?>> end = Collections.newArrayList();
         final List<Player<?>> players = getOnlinePlayers();
         for (Player<?> p : players) {
@@ -85,9 +76,7 @@ public class Players {
      * @return a {@code List<?>} representing the platform-specific online players;
      * the list is guaranteed to be non-null.
      */
-    public static @NotNull List<?> getPlatformOnlinePlayers() {
-        return getPlatformOnlinePlayersMethod.get();
-    }
+    @NotNull List<?> getPlatformOnlinePlayers();
 
     /**
      * Retrieves a list of the names of all online players currently connected to the server.
@@ -95,7 +84,5 @@ public class Players {
      * @return a {@code List} of {@code String} containing the names of online players;
      * the list is guaranteed to be non-null.
      */
-    public static @NotNull List<String> getOnlinePlayersName() {
-        return getOnlinePlayersNameMethod.get();
-    }
+    @NotNull List<String> getOnlinePlayersName();
 }

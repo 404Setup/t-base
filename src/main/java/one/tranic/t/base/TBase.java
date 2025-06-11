@@ -5,6 +5,7 @@ import one.tranic.t.base.command.source.SystemCommandSource;
 import one.tranic.t.thread.T2hread;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -13,14 +14,31 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class TBase {
     public final static ExecutorService executor = T2hread.getExecutor();
+    public final static TInterface INSTANCE;
     private final static Operator operator = new Operator("Console", UUID.fromString("05b11eee-24db-4a21-ba9d-e12e8df9a92f"));
     private static final String packageName;
     //public final static List<String> EMPTY_LIST = Collections.newUnmodifiableList();
     private static SystemCommandSource<?, ?> CONSOLE_SOURCE;
-    private static Supplier<SystemCommandSource<?, ?>> getConsoleSourceSupplier;
 
     static {
         packageName = getRootPath();
+        INSTANCE = load();
+    }
+
+    @SuppressWarnings("all")
+    private static TInterface load() {
+        var loader = ServiceLoader.load(TInterface.class);
+        var i = loader.iterator();
+        for (; i.hasNext(); ) {
+            var service = i.next();
+            var platforms = service.getSupportedPlatforms();
+            for (var platform : platforms) {
+                if (platform.is() && !platform.isMixinServer()) {
+                    return service;
+                }
+            }
+        }
+        throw new NullPointerException("Failed to load service for " + TInterface.class.getName());
     }
 
     /**
@@ -54,22 +72,6 @@ public class TBase {
 
     public static Operator console() {
         return operator;
-    }
-
-    /**
-     * Retrieves the console as a {@link SystemCommandSource}, an abstraction representing
-     * the source of command execution or interaction.
-     *
-     * @return a {@link SystemCommandSource} instance representing the console source, typically used
-     * for administrative or automated command execution.
-     */
-    public static @Nullable SystemCommandSource<?, ?> getConsoleSource() {
-        if (CONSOLE_SOURCE != null) return CONSOLE_SOURCE;
-        if (getConsoleSourceSupplier != null) {
-            CONSOLE_SOURCE = getConsoleSourceSupplier.get();
-            return CONSOLE_SOURCE;
-        }
-        return null;
     }
 
     /**
