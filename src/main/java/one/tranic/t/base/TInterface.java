@@ -12,6 +12,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 public interface TInterface {
+    void enable();
+
+    void disable();
+
     Platform[] getSupportedPlatforms();
 
     SystemCommandSource<?, ?> getConsoleSource();
