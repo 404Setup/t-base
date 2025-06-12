@@ -99,5 +99,6 @@ public class TBase {
 
     public static void close() {
         executor.shutdownNow();
+        INSTANCE.disable();
     }
 }

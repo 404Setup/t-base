@@ -11,21 +11,13 @@ import java.util.UUID;
 
 @SuppressWarnings("unused")
 public interface Player<C> {
-    static @Nullable Player<?> getPlayer(@NotNull String name) {
-        return TBase.INSTANCE.getPlayer(name);
-    }
-
-    static @Nullable Player<?> getPlayer(@NotNull UUID uuid) {
-        return TBase.INSTANCE.getPlayer(uuid);
-    }
-
     /**
      * Converts the current player instance to a BedrockPlayer.
      *
      * @return a {@link BedrockPlayer} instance if the player is a Bedrock player, or null if not applicable
      */
-    default @Nullable BedrockPlayer toBedrockPlayer() {
-        return BedrockPlayer.of(this);
+    default @Nullable BedrockPlayer<C> toBedrockPlayer() {
+        return new BedrockPlayer<>(this);
     }
 
     /**
@@ -44,27 +36,16 @@ public interface Player<C> {
 
     /**
      * Retrieves the protocol version of the player.
-     * <p>
-     * For Bedrock players, the method returns -1 as they do not use protocol versions.
-     * <p>
-     * For non-Bedrock players, the method fetches their protocol version using ViaPlayer.
      *
-     * @return the protocol version of the player as an integer, or -1 if the player is a Bedrock player
+     * @return the protocol version of the player as an integer
      */
     default int getPlayerProtocolVersion() {
-        if (isBedrockPlayer()) return -1;
+        if (isBedrockPlayer()) return toBedrockPlayer().protocolVersion();
         return ViaPlayer.getVersion(getUniqueId());
     }
 
     /**
      * Retrieves the protocol version of the player.
-     * <p>
-     * This method determines the player's protocol version based on:
-     * <p>
-     * - If the player is a Bedrock player, the protocol version will be {@link ProtocolVersion#UNKNOWN}.
-     * <p>
-     * - Otherwise, it uses the {@link ViaPlayer#getVersion(UUID)} implementation
-     * to fetch the protocol version based on the player's unique identifier (UUID).
      *
      * @return the player's protocol version as a {@link ProtocolVersion} instance.
      */

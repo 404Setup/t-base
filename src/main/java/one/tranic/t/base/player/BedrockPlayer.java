@@ -2,6 +2,7 @@ package one.tranic.t.base.player;
 
 import one.tranic.t.base.parse.uuid.UUIDParser;
 import one.tranic.t.utils.Reflect;
+import org.apache.commons.lang.Validate;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.cumulus.form.Form;
@@ -15,14 +16,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class BedrockPlayer {
+@SuppressWarnings("all")
+public class BedrockPlayer<P> {
     private static final boolean geyser = Reflect.hasClass("org.geysermc.geyser.api.GeyserApi");
     private static final boolean floodgate = Reflect.hasClass("org.geysermc.floodgate.api.FloodgateApi");
 
-    private final Player player;
+    private final Player<P> player;
     private final Object bedrockPlayer;
 
-    protected BedrockPlayer(@NotNull Player player) {
+    public BedrockPlayer(@NotNull Player<P> player) {
         this.player = player;
         this.bedrockPlayer = getBedrockPlayer(player.getUniqueId());
     }
@@ -33,7 +35,7 @@ public class BedrockPlayer {
      * @param player the {@link Player} to convert to a {@link BedrockPlayer}; must not be null
      * @return a new {@link BedrockPlayer} instance associated with the given {@link Player}
      */
-    public static BedrockPlayer of(@NotNull Player player) {
+    public static @NotNull BedrockPlayer of(@NotNull Player player) {
         return new BedrockPlayer(player);
     }
 
@@ -51,13 +53,23 @@ public class BedrockPlayer {
     }
 
     /**
+     * Determines whether the specified player is a Bedrock player.
+     *
+     * @param player the player to check; must not be null
+     * @return true if the specified player is a Bedrock player, otherwise false
+     */
+    public static boolean isBedrockPlayer(@NotNull Player player) {
+        return isBedrockPlayer(player.getUniqueId());
+    }
+
+    /**
      * Checks if a given UUID string represents a Floodgate player by verifying
      * if it starts with the Floodgate UUID prefix.
      *
      * @param uuid the UUID string of the player, expected to contain dashes and not null
      * @return {@code true} if the UUID represents a Floodgate player, {@code false} otherwise
      */
-    public static boolean isFloodgatePlayer(String uuid) {
+    public static boolean isFloodgatePlayer(@NotNull String uuid) {
         final String FLOODGATE_UUID_PREFIX = "0000000000000000";
 
         String str = UUIDParser.removeDashes(uuid);
@@ -70,8 +82,28 @@ public class BedrockPlayer {
      * @param uuid the universally unique identifier (UUID) of the player to check
      * @return true if the player is a Floodgate player, false otherwise
      */
-    public static boolean isFloodgatePlayer(UUID uuid) {
+    public static boolean isFloodgatePlayer(@NotNull UUID uuid) {
         return isFloodgatePlayer(uuid.toString());
+    }
+
+    /**
+     * Determines if the specified Bedrock player is a Floodgate player.
+     *
+     * @param player the Bedrock player to check; must not be null
+     * @return true if the specified player is a Floodgate player, false otherwise
+     */
+    public static boolean isFloodgatePlayer(@NotNull BedrockPlayer player) {
+        return isFloodgatePlayer(player.uuid());
+    }
+
+    /**
+     * Determines whether the specified player is a Floodgate player.
+     *
+     * @param player the player to check; must not be null
+     * @return true if the player is a Floodgate player, false otherwise
+     */
+    public static boolean isFloodgatePlayer(@NotNull Player player) {
+        return isFloodgatePlayer(player.getUniqueId());
     }
 
     /**
@@ -80,7 +112,7 @@ public class BedrockPlayer {
      * @param uuid the unique identifier of the player to retrieve
      * @return the Bedrock player object if found, otherwise null
      */
-    private static @Nullable Object getBedrockPlayer(UUID uuid) {
+    private static @Nullable Object getBedrockPlayer(@NotNull UUID uuid) {
         return floodgate ? FloodgateApi.getInstance().getPlayer(uuid) :
                 geyser ? GeyserApi.api().connectionByUuid(uuid) : null;
     }
@@ -108,7 +140,7 @@ public class BedrockPlayer {
      *
      * @return the {@link Player} instance associated with this object; never null
      */
-    public @NotNull Player player() {
+    public @NotNull Player<P> player() {
         return player;
     }
 
@@ -131,11 +163,8 @@ public class BedrockPlayer {
      */
     public @NonNull String platform() {
         if (bedrockPlayer != null) {
-            if (floodgate) {
-                return ((FloodgatePlayer) bedrockPlayer).getDeviceOs().toString();
-            } else if (geyser) {
-                return ((GeyserConnection) bedrockPlayer).platform().toString();
-            }
+            if (floodgate) return ((FloodgatePlayer) bedrockPlayer).getDeviceOs().toString();
+            if (geyser) return ((GeyserConnection) bedrockPlayer).platform().toString();
         }
         return "Java Edition";
     }
@@ -150,9 +179,34 @@ public class BedrockPlayer {
      * @return the subscription ID of the Floodgate player, or -1 if unavailable
      */
     public int subscribeId() {
-        if (bedrockPlayer != null && floodgate) {
+        if (bedrockPlayer != null && floodgate)
             return ((FloodgatePlayerImpl) bedrockPlayer).getSubscribeId();
+        return -1;
+    }
+
+    /**
+     * Retrieves the version of the Bedrock player, if applicable.
+     *
+     * @return the version of the Bedrock player as a {@code String}, or {@code null}
+     * if the player is not a Bedrock player or the version could not be determined
+     */
+    public @Nullable String version() {
+        if (bedrockPlayer != null) {
+            if (geyser) return ((GeyserConnection) bedrockPlayer).version();
+            if (floodgate) return ((FloodgatePlayer) bedrockPlayer).getVersion();
         }
+        return null;
+    }
+
+    /**
+     * Retrieves the protocol version of the Bedrock player if applicable.
+     *
+     * @return the protocol version as an integer if the player is a Geyser Bedrock player;
+     * otherwise, returns -1 if the player is not a Bedrock player or Geyser is not available.
+     */
+    public int protocolVersion() {
+        if (bedrockPlayer != null && geyser)
+            return ((GeyserConnection) bedrockPlayer).protocolVersion();
         return -1;
     }
 
@@ -166,9 +220,8 @@ public class BedrockPlayer {
      * Bedrock player, Geyser is not enabled, or if the device ID is unavailable
      */
     public @Nullable String deviceId() {
-        if (bedrockPlayer != null && geyser) {
+        if (bedrockPlayer != null && geyser)
             return ((GeyserSession) bedrockPlayer).getClientData().getDeviceId();
-        }
         return null;
     }
 
@@ -181,9 +234,8 @@ public class BedrockPlayer {
      * @return the device model of the Bedrock player as a string, or {@code null} if unavailable
      */
     public @Nullable String deviceModel() {
-        if (bedrockPlayer != null && geyser) {
+        if (bedrockPlayer != null && geyser)
             return ((GeyserSession) bedrockPlayer).getClientData().getDeviceModel();
-        }
         return null;
     }
 
@@ -198,12 +250,8 @@ public class BedrockPlayer {
      */
     public @Nullable String inputMode() {
         if (bedrockPlayer != null) {
-            if (floodgate) {
-                return ((FloodgatePlayer) bedrockPlayer).getInputMode().name();
-            }
-            if (geyser) {
-                return ((GeyserConnection) bedrockPlayer).inputMode().name();
-            }
+            if (floodgate) return ((FloodgatePlayer) bedrockPlayer).getInputMode().name();
+            if (geyser) return ((GeyserConnection) bedrockPlayer).inputMode().name();
         }
         return null;
     }
@@ -219,9 +267,8 @@ public class BedrockPlayer {
      * @return the client ID as a long if the player is a Geyser Bedrock player; -1 otherwise
      */
     public long clientID() {
-        if (bedrockPlayer != null && geyser) {
+        if (bedrockPlayer != null && geyser)
             return ((GeyserSession) bedrockPlayer).getClientData().getClientRandomId();
-        }
         return -1;
     }
 
@@ -235,14 +282,27 @@ public class BedrockPlayer {
      */
     public @Nullable String xuid() {
         if (bedrockPlayer != null) {
-            if (floodgate) {
-                return ((FloodgatePlayer) bedrockPlayer).getXuid();
-            }
-            if (geyser) {
-                return ((GeyserConnection) bedrockPlayer).xuid();
-            }
+            if (floodgate) return ((FloodgatePlayer) bedrockPlayer).getXuid();
+            if (geyser) return ((GeyserConnection) bedrockPlayer).xuid();
         }
         return null;
+    }
+
+    /**
+     * Retrieves the unique identifier (UUID) associated with this player.
+     *
+     * @return the UUID of the player; never null
+     */
+    public @NotNull UUID uuid() {
+        if (bedrockPlayer != null) {
+            if (floodgate) return ((FloodgatePlayer) bedrockPlayer).getCorrectUniqueId();
+            if (geyser) {
+                var uuid = ((GeyserConnection) bedrockPlayer).playerUuid();
+                if (uuid == null) uuid = player.getUniqueId();
+                return uuid;
+            }
+        }
+        return player.getUniqueId();
     }
 
     /**
@@ -256,29 +316,20 @@ public class BedrockPlayer {
     @SuppressWarnings("all")
     public boolean form(@NotNull Form form) {
         if (bedrockPlayer != null && form != null) {
-            if (floodgate) {
-                return ((FloodgatePlayer) bedrockPlayer).sendForm(form);
-            }
-            if (geyser) {
-                return ((GeyserConnection) bedrockPlayer).sendForm(form);
-            }
+            if (floodgate) return ((FloodgatePlayer) bedrockPlayer).sendForm(form);
+            if (geyser) return ((GeyserConnection) bedrockPlayer).sendForm(form);
         }
         return false;
     }
 
     /**
      * Retrieves the ping value of a Bedrock player if applicable.
-     * <p>
-     * This method checks if the associated player is a Bedrock player and if
-     * the Geyser integration is available.
      *
      * @return the ping value in milliseconds for a Bedrock player, or -1 if
      * the player is not a Bedrock player or Geyser is not available.
      */
     public long ping() {
-        if (bedrockPlayer != null && geyser) {
-            return ((GeyserConnection) bedrockPlayer).ping();
-        }
-        return -1;
+        if (bedrockPlayer != null && geyser) return ((GeyserConnection) bedrockPlayer).ping();
+        return player.getPing();
     }
 }
