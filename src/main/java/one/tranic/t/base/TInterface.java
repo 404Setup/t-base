@@ -1,6 +1,7 @@
 package one.tranic.t.base;
 
 import one.tranic.t.base.command.source.SystemCommandSource;
+import one.tranic.t.base.loader.TPLoader;
 import one.tranic.t.base.player.Player;
 import one.tranic.t.utils.Collections;
 import one.tranic.t.utils.minecraft.Platform;
@@ -22,6 +23,8 @@ public interface TInterface<S, P> {
      * Disables the current instance of the interface or system.
      */
     void disable();
+
+    TPLoader getLoader();
 
     /**
      * Retrieves an array of supported platforms for the implementing service.

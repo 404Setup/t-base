@@ -2,8 +2,8 @@ package one.tranic.t.base;
 
 import one.tranic.t.base.command.Operator;
 import one.tranic.t.base.command.source.SystemCommandSource;
+import one.tranic.t.base.loader.TPLoader;
 import one.tranic.t.thread.T2hread;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ServiceLoader;
 import java.util.UUID;
@@ -23,6 +23,10 @@ public class TBase {
     static {
         packageName = getRootPath();
         INSTANCE = load();
+    }
+
+    public static TPLoader getLoader() {
+        return INSTANCE.getLoader();
     }
 
     @SuppressWarnings("all")
